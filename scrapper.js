@@ -5,6 +5,7 @@ const scrapping = {
     extractData: extractData
 }
 module.exports = scrapping
+// AAAA
 
 const extractUrls = async (url) => {
     try {// Inicializamos una instancia del navegador (browser) con puppeteer.launch() y añadimos en el objeto de configuración la opción headless
