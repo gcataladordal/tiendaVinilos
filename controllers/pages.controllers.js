@@ -1,6 +1,12 @@
 const pages = {
     home: (req, res) => {
-        res.render("index");
+        res.render("home");
+    },
+    register: (req, res) => {
+        res.render("registro");
+    },
+    login: (req, res) => {
+        res.render("login");
     }
 
 }
