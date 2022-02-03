@@ -1,14 +1,14 @@
 const pages = {
     home: (req, res) => {
-        res.render("home");
+        res.render("pages/home");
     },
+
     register: (req, res) => {
         res.render("registroLogin");
     },
     registro: (req, res) => {
         registrar(req, res);
     }
-
 }
 
 
