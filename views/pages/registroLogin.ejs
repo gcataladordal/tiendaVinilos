@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <main>
+        <!-- ! FORMULARIOS DE LOGIN Y REGISTER -->
+
+        <div class="container">
+            <br>
+            <h4 class="text-center"> Regístrate o inicia sesión para continuar</h4>
+            <br>
+        </div>
+        <div class="container mt-3" id="div-register">
+            <div class="row justify-content-evenly">
+                <div class="col-4 ">
+                    <form action="/registrar" method="POST" id="fmRegister"
+                        class=" border border-3 rounded-3 p-3 bg-primary">
+
+                        <!--! ***REGISTER ****-->
+                        <h5>REGISTER</h5>
+
+                        <!--! *** Nombre ***-->
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="nombre" class="input-group-text">Nombre</label>
+                            <input type="text" class="form-control" placeholder="Ej: Juan" name="nombre" id="nombre"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!-- ! *** Apellidos ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="apellidos" class="input-group-text">Apellidos</label>
+                            <input type="text" class="form-control" placeholder="Ej: Fernández Gómez" name="apellidos"
+                                id="apellidos" required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** Email ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="email" class="input-group-text">Email</label>
+                            <input type="text" class="form-control" placeholder="Ej: Ana@hotmail.com" name="email"
+                                id="emailReg" required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** Password ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="password1" class="input-group-text">Password</label>
+                            <input type="password" class="form-control" placeholder="Password" name="password1"
+                                id="password1" required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** Repetir Password ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="password2" class="input-group-text">Repetir Password</label>
+                            <input type="password" class="form-control" placeholder="Confirmar Password"
+                                name="password2" id="password2" required><br>
+                        </div>
+                        <span></span> <span></span> 
+                        <!--! *** DNI ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="dni" class="input-group-text">DNI</label>
+                            <input type="text" class="form-control" placeholder="Ej: 510698745-X" name="dni" id="dni"
+                                aria-describedby="nameHelp" required>
+                        </div>
+                        <span></span>
+                        <!--! *** Dirección ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="direccion" class="input-group-text">Dirección</label>
+                            <input type="text" class="form-control" placeholder="Ej: C/ Paco de Lucia nº5"
+                                name="direccion" id="direccion" aria-describedby="nameHelp" required>
+                        </div>
+                        <span></span>
+                        <!--! *** Teléfono ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="tlf" class="input-group-text">Teléfono</label>
+                            <input type="text" class="form-control" placeholder="Ej: 695403647" name="tlf" id="tlf"
+                                aria-describedby="nameHelp" required>
+                        </div>
+                        <span></span>
+
+
+
+                        <div class="mb-2">
+                            <button class="btn btn-outline-secondary bg-dark" type="submit"
+                                id="btRegister">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!--! LOGIN -->
+
+                <div class="col-4 ">
+                    <form action="/loguear" method="POST" id="fmLogin"
+                        class="border border-3 rounded-3 p-3 bg-primary">
+                        <h5>LOGIN</h5>
+                        <!--! *** Email ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="email" class="input-group-text">Email</label>
+                            <input type="text" class="form-control" placeholder="Ej: Ana@hotmail.com" name="email"
+                                id="emailLogin" required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** Password ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="password1" class="input-group-text">Password</label>
+                            <input type="password" class="form-control" placeholder="Password" name="password"
+                                id="passLogin" required><br>
+                        </div>
+                        <span></span>
+
+                        <div class="mb-2">
+                            <input class="btn btn-outline-secondary bg-dark" type="submit" id="btLoguear"
+                                value="Loguear">
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </main>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+</body>
+
+</html>
