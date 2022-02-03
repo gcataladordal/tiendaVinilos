@@ -23,8 +23,10 @@ router.get("/",pages.home);
 // // Viene del formulario para ver el historial
 // router.post("/historial", pages.historial);
 // // Viene de un botón al login
-router.get("/login", pages.login)
-// // Viene de un botón al register
+router.get("/insertarUsuario", pages.insertarUsuario)
+router.get("/insertarProducto", pages.insertarProducto)
+router.get("/insertarCompra", pages.insertarCompra)
+// Viene de un botón al register
 router.get("/register", pages.register)
 // // Viene de un botón de perfil
 // router.get("/perfil", pages.perfil);

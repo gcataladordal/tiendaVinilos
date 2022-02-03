@@ -1,5 +1,5 @@
 /* require('./database/mongo.cnx') */
-// require("./database/mongo")
+require("./database/mongo")
 const express = require("express");
 const app = express();
 const router = require("./routes/routes")

@@ -1,0 +1,39 @@
+[
+    {
+
+        "id_compra": "Antonio",
+        "id_usuario": "Flores",
+        "fecha": "03-01-2022",
+        "id_vinilos": [
+            "" ,
+            ""
+        ]
+    },
+    {
+        "id_compra": "Antonio",
+        "id_usuario": "Flores",
+        "fecha": "03-01-2022",
+        "id_vinilos": [
+            "" ,
+            ""
+        ]
+    },
+    {
+        "id_compra": "Antonio",
+        "id_usuario": "Flores",
+        "fecha": "03-01-2022",
+        "id_vinilos": [
+            "" ,
+            ""
+        ]
+    },
+    {
+        "id_compra": "Antonio",
+        "id_usuario": "Flores",
+        "fecha": "03-01-2022",
+        "id_vinilos": [
+            "" ,
+            ""
+        ]
+    }
+]
