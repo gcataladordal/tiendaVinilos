@@ -9,7 +9,7 @@ const pages = {
     },
 
     register: (req, res) => {
-        res.render("registroLogin");
+        res.render("pages/registerLogin");
     },
     insertarUsuario: (req, res) => {
         let usuario = {
@@ -28,7 +28,7 @@ const pages = {
             ],
             admin: false
         }
-        
+
         let nuevoUsuario = new Usuario(usuario)
 
         nuevoUsuario.save(function (err) {
@@ -49,7 +49,7 @@ const pages = {
             numDisco: "2",
             precio: "65.00€"
         }
-        
+
         let nuevoVinilo = new Producto(vinilo)
 
         nuevoVinilo.save(function (err) {
@@ -67,7 +67,7 @@ const pages = {
             productos: ["1", "2", "3"],
             created: Date.now()
         }
-        
+
         let nuevaCompra = new Compra(compra)
 
         nuevaCompra.save(function (err) {
@@ -77,10 +77,10 @@ const pages = {
         });
 
         res.send("Ha ido Bien");
-    },  registro: (req, res) => {
+    }, registro: (req, res) => {
         registrar(req, res);
+    }
 }
-
 
 
 function registrar(req, res) {
