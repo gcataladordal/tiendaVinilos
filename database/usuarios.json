@@ -1,0 +1,59 @@
+[
+    {
+        "_id": {
+            "$oid": "61f17ecb471ba266c5ae5718"
+        },
+        "nombre": "Antonio",
+        "apellidos": "Flores",
+        "email": "Pepa",
+        "pass": "Antonia Martínez",
+        "dni": "12345678A",
+        "telefono": "911234567",
+        "direccion": "Calle del mar nº6, 2ºG",
+        "cp": "28058",
+        "poblacion": "Madrid",
+        "compras": [
+            "" ,
+            ""
+        ],
+        "admin": false
+    },
+    {
+        "_id": {
+            "$oid": "61f17ecb471ba266c5ae5718"
+        },
+        "nombre": "Juana",
+        "apellidos": "Montaña",
+        "email": "juanamon@gmail.com",
+        "pass": "1234",
+        "dni": "12345678B",
+        "telefono": "9123476589",
+        "direccion": "Calle mariposa nº8, 3ºA",
+        "cp": "08028",
+        "poblacion": "Barcelona",
+        "compras": [
+            "" ,
+            ""
+        ],
+        "admin": false
+    },
+    {
+        "_id": {
+            "$oid": "61f17ecb471ba266c5ae5718"
+        },
+        "nombre": "Pepa",
+        "apellidos": "Antonia Martínez",
+        "email": "pepapaciente@gmail.com",
+        "pass": "123456",
+        "dni": "",
+        "telefono": "",
+        "direccion": "",
+        "cp": "",
+        "poblacion": "",
+        "compras": [
+            "" ,
+            ""
+        ],
+        "admin": true
+    }
+]

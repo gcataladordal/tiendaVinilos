@@ -1,0 +1,28 @@
+[
+    {
+    "_id": {
+        "$oid": "61f17ecb471ba266c5ae5718"
+    },
+    "isbn": "Antonio",
+    "titulo disco": "Flores",
+    "autor": "Pepa",
+    "genero": "Antonio",
+    "año edición": "Flores",
+    "nº discos": "Pepa",
+    "precio": "Pepa"
+
+},
+{
+    "_id": {
+        "$oid": "61f17ecb471ba266c5ae5718"
+    },
+    "isbn": "Antonio",
+    "titulo disco": "Flores",
+    "autor": "Pepa",
+    "genero": "Antonio",
+    "año edición": "Flores",
+    "nº discos": "Pepa",
+    "precio": "Pepa"
+
+}
+]
