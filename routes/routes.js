@@ -22,12 +22,16 @@ router.get("/",pages.home);
 // router.post("/factura",pages.factura)
 // // Viene del formulario para ver el historial
 // router.post("/historial", pages.historial);
-// // Viene de un botón al login
+
+
 router.get("/insertarUsuario", pages.insertarUsuario)
 router.get("/insertarProducto", pages.insertarProducto)
 router.get("/insertarCompra", pages.insertarCompra)
-// Viene de un botón al register
-router.get("/register", pages.register)
+
+
+// // Viene de un botón al register
+router.get("/registerLogin", pages.register);
+router.post("/registrar", pages.registro);
 // // Viene de un botón de perfil
 // router.get("/perfil", pages.perfil);
 // // Viene de un botón del producto y te lleva a la info de ese producto
