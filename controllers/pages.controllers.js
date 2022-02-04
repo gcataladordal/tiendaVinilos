@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
+const storage = require("node-sessionstorage");
+
+// ! REQUIRE de BCRYPT
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const pages = {
     home: (req, res) => {
@@ -72,6 +77,15 @@ const pages = {
 
     registro: (req, res) => {
         registrar(req, res);
+    },
+
+    login: (req, res) => {
+        loguear(req, res);
+    },
+    logout: (req,res) =>{
+        storage.removeItem('user');
+        console.log('session logout: ', storage.getItem('user'));
+        res.render("pages/home");
     }
 }
 
@@ -92,17 +106,7 @@ async function obtenerInfoProducto(req) {
 async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
-    var nombre = req.body.nombre;
-    var apellidos = req.body.apellidos;
-    var email = req.body.email;
-    var pass = req.body.password1;
-    var pass2 = req.body.password2;
-    var dni = req.body.dni;
-    var direccion = req.body.direccion;
-    var cp = req.body.cp;
-    var poblacion = req.body.poblacion;
-    var tlf = req.body.tlf;
-
+    const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
 
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
@@ -114,33 +118,46 @@ async function registrar(req, res) {
 
     //! Zona de validaciones
 
-    var nombreOk = regExpName.test(nombre);
-    var apellidosOk = regExpName.test(apellidos);
-    var emailOk = regExpEmail.test(email);
-    var passOk = regExpPass.test(pass);
-    var pass2Ok = regExpPass.test(pass2);
-    var mismoPassOk = pass == pass2;
-    var dniOk = regExpDni.test(dni) && validation_dni(dni);
-    //// var direccionOk = regExpName.test(direccion); NO pasa por validacion
-    var cpOk = regExpCp.test(cp);
-    var tlfOk = regExpTlf.test(tlf);
-    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
+    const nombreOk = regExpName.test(nombre);
+    const apellidosOk = regExpName.test(apellidos);
+    const emailOk = regExpEmail.test(email);
+    const passOk = regExpPass.test(password);
+    const pass2Ok = regExpPass.test(password2);
+    const mismoPassOk = password == password2;
+    const dniOk = regExpDni.test(dni) && validation_dni(dni);
+    //// const direccionOk = regExpName.test(direccion); NO pasa por validacion
+    const cpOk = regExpCp.test(cp);
+    const tlfOk = regExpTlf.test(tlf);
+    console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
 
     var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && cpOk && tlfOk;
-    console.log(ok);
+    // var ok = nombreOk && apellidosOk && emailOk && dniOk && cpOk && tlfOk;
 
-    // var ok = true;  // Para hacerlo sin validaciones
+    // console.log(ok);
+
+    var ok = true;  // Para hacerlo sin validaciones
+    // 47919013P
+
+   
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
     if (ok) {
-        // busquedaUsuario(dni);
-        // if (!users[0]) {
-        //     console.log("se registra");
-        insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res)
-        // } else {
-        //     console.log("existe usuario");
-        // }
-        //
+        console.log("Entra");
+        const existeDni = await busquedaUsuarioDni(dni);
+        //devuleve {} del usuario de la base de datos, sino es null
+        // console.log("*******************");
+
+        // console.log(existeDni);
+        if ((existeDni) == null) {
+            console.log("se registra");
+            var passEnc = "";
+            passEnc = await bcrypt.hash(password, saltRounds);
+            console.log(passEnc);
+            insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
+
+        } else {
+            console.log("existe usuario");
+        }
     } else {
         if (!nombreOk) { console.log("Nombre no válido"); }
         if (!apellidosOk) { console.log("Apellidos no válido"); }
@@ -148,21 +165,79 @@ async function registrar(req, res) {
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
         if (!pass2Ok) { console.log("Pasword no válido"); }
         if (!mismoPassOk) { console.log(" Passwords no son iguales"); }
-        if (!dniOk) { console.log(" Passwords no son iguales"); }
-        if (!cpOk) { console.log(" Passwords no son iguales"); }
-        if (!tlfOk) { console.log(" Passwords no son iguales"); }
-
+        if (!dniOk) { console.log(" dni no valido"); }
+        if (!cpOk) { console.log(" cp no valido"); }
+        if (!tlfOk) { console.log(" tlf no valido"); }
     }
-
 }
 
 
-async function busquedaUsuario(dni) {
-    
-    Usuario.find({ dni: dni }).exec(function (err, users) {
-        if (err) throw err;
-        return console.log(users[0]);
-    });
+// ! ********  LOGUEAR*********
+
+async function loguear(req, res) {
+
+    //! ---- Variables de la información del registro -----
+
+    const email2 = req.body.email2;
+    const password3 = req.body.password3;
+
+    //! Expresiones Regulares validaciones:
+
+    var regExpEmail = new RegExp(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/);
+    var regExpPass = new RegExp(/^(?=\w*\d)(?=\w*[a-zA-Z])\S{6,10}$/);
+
+    //! Zona de validaciones
+
+    const emailOk = regExpEmail.test(email2);
+    const passOk = regExpPass.test(password3);
+
+    // console.log(`email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok}`);
+    var ok = emailOk && passOk;
+    // var ok = true;  // Para hacerlo sin validaciones
+    // 47919013P
+    // //! ---- SI TODAS VALIDACIONES TRUE --------
+    if (ok) {
+        // Busca en BD si existe ese mail
+        const existeEmail = await busquedaUsuarioEmail(email2);
+
+        if ((existeEmail[0]) == undefined) {
+            console.log("Registrate");
+        } else {
+            // console.log("Eres TU y tu pass del bd es"+ existeEmail[0].pass);
+            // console.log("pass? " + existeEmail[0].pass);
+            var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
+            if (mismoPass) {
+
+                if (existeEmail[0].admin) {
+                    console.log("Hola ADMIN!!");
+                    res.render("pages/admin");
+                }else{
+                    storage.setItem('user', existeEmail[0]);
+                    console.log('session logeado: ', storage.getItem('user'))
+                    console.log("Hola, logueaste usuario!!");
+                    res.render("pages/home");
+                }
+            } else {
+                console.log("Olvidates tu pass???");
+            }
+        }
+    } else {
+        if (!emailOk) { console.log("Email no válido"); }
+        if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+    }
+}
+
+
+async function busquedaUsuarioDni(dni) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    const datos = await Usuario.findOne({ dni: dni });
+    return datos;
+}
+
+async function busquedaUsuarioEmail(email) {
+    const datos2 = await Usuario.find({ email: email });
+    return datos2;
 }
 
 function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
@@ -172,7 +247,7 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         nombre: nombre,
         apellidos: apellidos,
         email: email,
-        pass: pass, //encripatar antes
+        pass: pass, //encriptar antes
         dni: dni,
         telefono: tlf,
         direccion: direccion,

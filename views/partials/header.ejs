@@ -1,24 +1,59 @@
-
-
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand link-info" href="/">VinilosFull</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link link-info" aria-current="page" href="/tienda">Tienda</a>
-                <a class="nav-link link-info" href="/registerLogin">Register / Login</a>
-                <a class="nav-link link-info" href="/buscarHist">Ver mi historial</a>
-                <a class="nav-link link-info" id="miPerfil" href="/perfil">Mi Perfil</a>
-                <a class="nav-link link-info" id="logout" href="#">Logout</a>
-                <a class="nav-link link-info" id="carrito" href="/carrito">Carrito</a>
-            </div>
-        </div>
-        
+<!-- banner cabecera -->
+<div class="container-fluid">
+    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/banners/990-170.png">
     </div>
-</nav>
+    <!-- barra de navegación -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+            <div class="container-fluid">
+                <a class="navbar-brand link-info" href="/">VinilosFull</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link link-info" aria-current="page" href="/tienda">Tienda</a>
+                        <a class="nav-link link-info" href="/registerLogin">Register / Login</a>
+                        <a class="nav-link link-info" href="/buscarHist">Ver mi historial</a>
+                        <a class="nav-link link-info" id="miPerfil" href="/perfil">Mi Perfil</a>
+                        <a class="nav-link link-info" id="logout" href="/logout">Logout</a>
+                        <a class="nav-link link-info" id="carrito" href="/carrito">Carrito</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <!-- carrusel de imágenes -->
+    <div class="container">
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel1.png" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel2.png" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel3.png" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel4.png" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel5.png" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/carrusel/carrusel6.png" class="d-block w-100" alt="...">
+                </div>        
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
