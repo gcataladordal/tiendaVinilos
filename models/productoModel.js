@@ -8,7 +8,8 @@ const objetoProductoSchema = {
     genero: String,
     ano: String,
     numDisco: String,
-    precio: String
+    precio: String,
+    imgUrl: String,
 };
 
 const productoSchema = mongoose.Schema(objetoProductoSchema)
