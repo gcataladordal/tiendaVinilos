@@ -16,7 +16,9 @@ const objetoUsuarioSchema = {
     admin: Boolean
 };
 
-const usuarioSchema = mongoose.Schema(objetoUsuarioSchema)
+const usuarioSchema = mongoose.Schema(objetoUsuarioSchema, {versionKey: false});
+
+
 
 usuarioSchema.plugin(AutoIncrement, {inc_field: 'id_usuario'});
 

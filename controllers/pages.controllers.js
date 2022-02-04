@@ -12,11 +12,16 @@ const pages = {
     home: (req, res) => {
         res.render("pages/home");
     },
-    tienda: (req, res) => {
-        res.render("pages/tienda")
+    verTienda: async (req, res) => {
+        let infoDiscos = await obtenerInfoVinilos();
+        res.render("pages/tienda", {infoVinilos: infoDiscos})
     },
     verPerfil: (req, res) => {
         res.render("pages/perfil")
+    },
+    verProducto: async (req, res) => {
+        let infoDisco = await obtenerInfoProducto(req);
+        res.render("pages/producto", {infoProducto: infoDisco})
     },
     buscarHist: (req, res) => {
         res.render("pages/buscarHist")
@@ -29,27 +34,28 @@ const pages = {
         res.render("pages/registerLogin");
     },
 
-    insertarProducto: (req, res) => {
-        let vinilo = {
-            titulo: "Greatest Hits",
-            autor: "James Brown",
-            genero: "Funk",
-            ano: "1967",
-            numDisco: "2",
-            precio: "65.00€"
-        }
+    // insertarProducto: (req, res) => {
+    //     let vinilo = {
+    //         titulo: "A Night At The Opera",
+    //         autor: "Queen",
+    //         genero: "Rock",
+    //         ano: "1975",
+    //         numDisco: "2",
+    //         precio: "44.00€",
+    //         imgUrl: "https://dvfnvgxhycwzf.cloudfront.net/media/SharedImage/imageFull/.f3C7LS6U/SharedImage-53601.jpg?t=96658919e620ce1dee51"
+    //     }
 
-        let nuevoVinilo = new Producto(vinilo)
+    //     let nuevoVinilo = new Producto(vinilo)
 
-        nuevoVinilo.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta del vinilo");
-            // mongoose.disconnect();
-        });
+    //     nuevoVinilo.save(function (err) {
+    //         if (err) throw err;
+    //         console.log("Inserción correcta del vinilo");
+    //         // mongoose.disconnect();
+    //     });
 
-        res.send("Ha ido Bien");
+    //     res.send("Ha ido Bien");
 
-    },
+    // },
 
     insertarCompra: (req, res) => {
         let compra = {
@@ -82,6 +88,19 @@ const pages = {
         res.render("pages/home");
     }
 }
+
+async function obtenerInfoVinilos() {
+    var infoVinilo =  await Producto.find({})
+    
+    return infoVinilo
+}
+
+async function obtenerInfoProducto(req) {
+    var infoProducto = await Producto.find({"id_vinilo": req.body.id_vinilo})
+    return infoProducto
+}
+
+
 
 
 async function registrar(req, res) {
