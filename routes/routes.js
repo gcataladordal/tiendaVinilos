@@ -24,14 +24,15 @@ router.get("/carrito", pages.verCarrito);
 // router.post("/historial", pages.historial);
 
 
-router.get("/insertarUsuario", pages.insertarUsuario)
+
 router.get("/insertarProducto", pages.insertarProducto)
 router.get("/insertarCompra", pages.insertarCompra)
 
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
-router.post("/registrar", pages.registro);
+
+router.post("/registro", pages.registro);
 // // Viene de un botón de perfil
 router.get("/perfil", pages.verPerfil);
 // // Viene de un botón del producto y te lleva a la info de ese producto

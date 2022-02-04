@@ -19,38 +19,11 @@ const pages = {
     verCarrito: (req, res) => {
         res.render("pages/carrito")
     },
+
     viewRegister: (req, res) => {
         res.render("pages/registerLogin");
     },
-    insertarUsuario: (req, res) => {
-        let usuario = {
-            nombre: "Antonio",
-            apellidos: "Flores",
-            email: "Pepa",
-            pass: "Antonia Martínez",
-            dni: "12345678A",
-            telefono: "911234567",
-            direccion: "Calle del mar n6, 2G",
-            cp: "28058",
-            poblacion: "Madrid",
-            compras: [
-                "1",
-                "2"
-            ],
-            admin: false
-        }
 
-        let nuevoUsuario = new Usuario(usuario)
-
-        nuevoUsuario.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta del Usuario");
-            // mongoose.disconnect();
-        });
-
-        res.send("Ha ido Bien");
-
-    },
     insertarProducto: (req, res) => {
         let vinilo = {
             titulo: "Greatest Hits",
@@ -72,6 +45,7 @@ const pages = {
         res.send("Ha ido Bien");
 
     },
+
     insertarCompra: (req, res) => {
         let compra = {
             id_usuario: "1",
@@ -88,13 +62,15 @@ const pages = {
         });
 
         res.send("Ha ido Bien");
-    }, registro: (req, res) => {
+    },
+
+    registro: (req, res) => {
         registrar(req, res);
     }
 }
 
 
-function registrar(req, res) {
+async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
     var nombre = req.body.nombre;
@@ -104,6 +80,8 @@ function registrar(req, res) {
     var pass2 = req.body.password2;
     var dni = req.body.dni;
     var direccion = req.body.direccion;
+    var cp = req.body.cp;
+    var poblacion = req.body.poblacion;
     var tlf = req.body.tlf;
 
 
@@ -112,6 +90,7 @@ function registrar(req, res) {
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!
     var regExpEmail = new RegExp(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/);
     var regExpPass = new RegExp(/^(?=\w*\d)(?=\w*[a-zA-Z])\S{6,10}$/);
+    var regExpCp = new RegExp(/^\d{5}$/);
     var regExpTlf = new RegExp(/^[0-9]{9}$/); ///^\+34\-[0-9]{9}$/
 
     //! Zona de validaciones
@@ -124,65 +103,77 @@ function registrar(req, res) {
     var mismoPassOk = pass == pass2;
     var dniOk = regExpDni.test(dni) && validation_dni(dni);
     //// var direccionOk = regExpName.test(direccion); NO pasa por validacion
+    var cpOk = regExpCp.test(cp);
     var tlfOk = regExpTlf.test(tlf);
-    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n tlf: ${tlfOk}`);
+    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
 
-    var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && tlfOk;
-    // console.log(ok);
+    var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && cpOk && tlfOk;
+    console.log(ok);
 
     // var ok = true;  // Para hacerlo sin validaciones
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
-    // if (ok) {
-    //     var listaUsuarios = [];
-    //     var listaMedicos = [];
-    //     MongoClient.connect(url, function (err, db) {
-    //         if (err) throw err;
-    //         var dbo = db.db(mydb);
+    if (ok) {
+        // busquedaUsuario(dni);
+        // if (!users[0]) {
+        //     console.log("se registra");
+        insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res)
+        // } else {
+        //     console.log("existe usuario");
+        // }
+        //
+    } else {
+        if (!nombreOk) { console.log("Nombre no válido"); }
+        if (!apellidosOk) { console.log("Apellidos no válido"); }
+        if (!emailOk) { console.log("Email no válido"); }
+        if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+        if (!pass2Ok) { console.log("Pasword no válido"); }
+        if (!mismoPassOk) { console.log(" Passwords no son iguales"); }
+        if (!dniOk) { console.log(" Passwords no son iguales"); }
+        if (!cpOk) { console.log(" Passwords no son iguales"); }
+        if (!tlfOk) { console.log(" Passwords no son iguales"); }
 
-    //         dbo.collection(coleccionU).find({ "dni": dni }).toArray(function (err, listaUsuarios) {
-    //             if (err) throw err;
-
-    //             //! --------- Proceso de Registrar al Paciente ---------
-
-    //             if (listaUsuarios[0] == undefined) { //* Sino existe, se inserta
-    //                 dbo.collection(coleccionM).find({}).toArray(function (err, listaMedicos) {
-    //                     if (err) throw err;
-    //                     var randomDc = [];
-    //                     randomDc.push(listaMedicos[caos(0, 3)]); //* Asignación aleatoria de médicos.
-    //                     var idM = JSON.stringify(randomDc[0]._id).replace(/['"]+/g, ''); //* Se le quita las comas, sino añadia ""11rD471"".
-
-    //                     var user = {         //* ------> Formato que se añade a la MONGODB-------
-    //                         dni: dni.replace("-", ""),
-    //                         pass: pass,
-    //                         nombre: nombre,
-    //                         apellidos: apellidos,
-    //                         turno: randomDc[0].turno,
-    //                         id_medico: idM,
-    //                         admin: false
-    //                     }
-
-    //                     //!------- Insertar Usuario ------
-
-    //                     dbo.collection(coleccionU).insertOne(user, function (err, result) {
-    //                         if (err) throw err;
-    //                         db.close();
-    //                         res.sendFile(__dirname + '/registroSuccess.html');
-    //                     });
-    //                 });
-    //             } else { //! ----- Si existe, te lanza a la pg.
-    //                 db.close();
-    //                 res.sendFile(__dirname + '/usuarioExist.html');
-    //             }
-    //         });
-    //     });
-    //     //! ---- Si no todas las validaciones son TRUE --------
-    // } else {
-    //     res.sendFile(__dirname + '/error.html');
-    // }
+    }
 
 }
 
+
+async function busquedaUsuario(dni) {
+    
+    Usuario.find({ dni: dni }).exec(function (err, users) {
+        if (err) throw err;
+        return console.log(users[0]);
+    });
+}
+
+function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    let usuario = {
+        nombre: nombre,
+        apellidos: apellidos,
+        email: email,
+        pass: pass, //encripatar antes
+        dni: dni,
+        telefono: tlf,
+        direccion: direccion,
+        cp: cp,
+        poblacion: poblacion,
+        compras: [],
+        admin: false
+    }
+
+    let nuevoUsuario = new Usuario(usuario)
+
+    nuevoUsuario.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del Usuario ${nombre}`);
+        // mongoose.disconnect();
+    });
+
+    res.render("pages/registerLogin");
+
+}
 
 // ******** VALIDACIONES  ************
 
