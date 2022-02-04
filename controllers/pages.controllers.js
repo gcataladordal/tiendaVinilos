@@ -7,8 +7,19 @@ const pages = {
     home: (req, res) => {
         res.render("pages/home");
     },
-
-    register: (req, res) => {
+    tienda: (req, res) => {
+        res.render("pages/tienda")
+    },
+    verPerfil: (req, res) => {
+        res.render("pages/perfil")
+    },
+    buscarHist: (req, res) => {
+        res.render("pages/buscarHist")
+    },
+    verCarrito: (req, res) => {
+        res.render("pages/carrito")
+    },
+    viewRegister: (req, res) => {
         res.render("pages/registerLogin");
     },
     insertarUsuario: (req, res) => {
