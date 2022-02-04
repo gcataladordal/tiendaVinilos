@@ -12,7 +12,7 @@ const objetoProductoSchema = {
     imgUrl: String,
 };
 
-const productoSchema = mongoose.Schema(objetoProductoSchema)
+const productoSchema = mongoose.Schema(objetoProductoSchema, {versionKey: false})
 
 productoSchema.plugin(AutoIncrement, {inc_field: 'id_vinilo'});
 

@@ -6,7 +6,7 @@
     <%- include('../partials/head'); %>
 </head>
 
-<body class="container">
+<body>
     <header>
         <%- include('../partials/header'); %>
     </header>
@@ -21,7 +21,7 @@
         <div class="container mt-3" id="div-register">
             <div class="row justify-content-evenly">
                 <div class="col-4 ">
-                    <form action="/registrar" method="POST" id="fmRegister"
+                    <form action="/registro" method="POST" id="fmRegister"
                         class=" border border-3 rounded-3 p-3 bg-primary">
 
                         <!--! ***REGISTER ****-->
@@ -74,6 +74,16 @@
                                 aria-describedby="nameHelp" required>
                         </div>
                         <span></span>
+
+                         <!--! *** Teléfono ***-->
+
+                         <div class="input-group input-group-sm mb-2 ">
+                            <label for="tlf" class="input-group-text">Teléfono</label>
+                            <input type="text" class="form-control" placeholder="Ej: 695403647" name="tlf" id="tlf"
+                                aria-describedby="nameHelp" required>
+                        </div>
+                        <span></span>
+
                         <!--! *** Dirección ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
@@ -82,16 +92,24 @@
                                 name="direccion" id="direccion" aria-describedby="nameHelp" required>
                         </div>
                         <span></span>
-                        <!--! *** Teléfono ***-->
+                       
+                        <!--! *** CP ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
-                            <label for="tlf" class="input-group-text">Teléfono</label>
-                            <input type="text" class="form-control" placeholder="Ej: 695403647" name="tlf" id="tlf"
-                                aria-describedby="nameHelp" required>
+                            <label for="cp" class="input-group-text">Código Postal</label>
+                            <input type="text" class="form-control" placeholder="Ej: 28033"
+                                name="cp" id="cp" aria-describedby="nameHelp" required>
                         </div>
                         <span></span>
 
+                        <!--! *** Población ***-->
 
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="poblacion" class="input-group-text">Población</label>
+                            <input type="text" class="form-control" placeholder="Ej: Sevilla"
+                                name="poblacion" id="poblacion" aria-describedby="nameHelp" required>
+                        </div>
+                        <span></span>
 
                         <div class="mb-2">
                             <button class="btn btn-outline-secondary bg-dark" type="submit"

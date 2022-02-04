@@ -8,7 +8,7 @@ const objetoCompraSchema = {
     created: Date
 };
 
-const compraSchema = mongoose.Schema(objetoCompraSchema);
+const compraSchema = mongoose.Schema(objetoCompraSchema, {versionKey: false});
 
 compraSchema.plugin(AutoIncrement, {inc_field: 'id_compra'});
 
