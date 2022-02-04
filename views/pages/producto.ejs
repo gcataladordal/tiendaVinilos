@@ -3,7 +3,7 @@
 <head>
     <%- include('../partials/head'); %>
 </head>
-<body class="container">
+<body>
 
 <header>
     <%- include('../partials/header'); %>
@@ -12,8 +12,13 @@
 
 <main>
     <div class="container">
-        <h1>Aquí va el contenido</h1>
-        <p>Más de lo mismo</p>
+        <img src=" <%= infoProducto[0].imgUrl %>">
+        <h1> <%= infoProducto[0].titulo %> </h1> 
+        <p> <%= infoProducto[0].autor %></p>
+        <p> <%= infoProducto[0].genero %></p>
+        <p> <%= infoProducto[0].ano %></p>
+        <p> <%= infoProducto[0].numDisco %></p>
+        <p> <%= infoProducto[0].precio %></p>
     </div>
 </main>
 

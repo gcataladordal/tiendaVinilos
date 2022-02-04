@@ -1,26 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('../partials/head'); %>
 </head>
-<body class="container">
 
-<header>
-    <%- include('../partials/header'); %>
-</header>
+<body>
 
-<main>
-    <div class="container">
-        <form class="d-flex align-items-end">
-            <input class="form-control me-2" type="search" placeholder="¿Qué buscas?" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-        </form>
-    </div>
-</main>
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
 
-<footer>
-    <%- include('../partials/footer'); %>
-</footer>
+    <main>
+        <div class="container">
+            <form class="d-flex align-items-end">
+                <input class="form-control me-2" type="search" placeholder="¿Qué buscas?" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row justify-content-around">
+                <% for(let i=0 ; i < infoVinilos.length ; i++) { %>
+                    <div class="col-lg mt-3">
+                        <div class="card" style="width: 18rem;">
+                            <form action="/verProducto" method="POST">
+                                <input type="image"  class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> " alt="Submit Form">
+                            <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
+                            
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= infoVinilos[i].titulo %>
+                                    </h5>
+                                    <p class="card-text">
+                                        <%= infoVinilos[i].precio %>
+                                    </p>
+                                    <a href="#" class="btn btn-primary">Añadir al carrito</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
 
 </body>
+
 </html>
