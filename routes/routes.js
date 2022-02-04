@@ -23,8 +23,6 @@ router.get("/carrito", pages.verCarrito);
 // // Viene del formulario para ver el historial
 // router.post("/historial", pages.historial);
 
-
-
 router.get("/insertarProducto", pages.insertarProducto)
 router.get("/insertarCompra", pages.insertarCompra)
 
@@ -33,14 +31,12 @@ router.get("/insertarCompra", pages.insertarCompra)
 router.get("/registerLogin", pages.viewRegister);
 
 router.post("/registro", pages.registro);
+router.post("/login", pages.login);
+router.get("/logout", pages.logout);
 // // Viene de un botón de perfil
 router.get("/perfil", pages.verPerfil);
 // // Viene de un botón del producto y te lleva a la info de ese producto
 // router.post("/producto", pages.producto)
 
-
-
-
  
-
 module.exports = router;
