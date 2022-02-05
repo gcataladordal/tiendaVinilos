@@ -11,10 +11,244 @@
 
 
 <main>
-    <div class="container">
-        <h1>Aquí va el contenido</h1>
-        <p>Más de lo mismo</p>
-    </div>
+        <!-- ! FORMULARIO PARA AÑADIR, BORRAR E INSERTAR SCRAPPEO DEL ADMIN -->
+
+        <div class="container">
+            <br>
+            <h4 class="text-center"> Página del administrador</h4>
+            <br>
+        </div>
+        <div class="container mt-3" id="div-register">
+            <div class="row justify-content-evenly">
+
+                <!--! ***INSERTAR VINILOS ****-->
+                <div class="col-4 ">
+                    <form action="/admin" method="POST" id="fmAdminInsert">
+                        <h5>Insertar vinilo</h5>
+
+                        <!--! *** ISBN ***-->
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="isbn" class="input-group-text">ISBN</label>
+                            <input type="number" class="form-control" placeholder="" name="isbn" id="isbn" required><br>
+                        </div>
+                        <span></span>
+                        <!-- ! *** TÍTULO ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="titulo" class="input-group-text">Título</label>
+                            <input type="text" class="form-control" placeholder="" name="titulo" id="titulo"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** AUTOR ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="autor" class="input-group-text">Autor</label>
+                            <input type="text" class="form-control" placeholder="" name="autor" id="autor" required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** GÉNERO***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="genero" class="input-group-text">Género</label>
+                            <input type="text" class="form-control" placeholder="" name="password" id="genero"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** AÑO ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="anio" class="input-group-text">Año</label>
+                            <input type="number" class="form-control" placeholder="" name="anio" id="anio" required><br>
+                        </div>
+                        <span></span> <span></span>
+                        <!--! *** NÚMERO ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="numero" class="input-group-text">Número</label>
+                            <input type="number" class="form-control" placeholder="" name="numero" id="numero"
+                                aria-describedby="numero" required>
+                        </div>
+                        <span></span>
+
+                        <!--! *** DISCOS ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="discos" class="input-group-text">Discos</label>
+                            <input type="text" class="form-control" placeholder="" name="discos" id="discos"
+                                aria-describedby="discos" required>
+                        </div>
+                        <span></span>
+
+                        <!--! *** PRECIO ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="precio" class="input-group-text">Precio</label>
+                            <input type="text" class="form-control" placeholder="" name="precio" id="precio"
+                                aria-describedby="precio" required>
+                        </div>
+                        <span></span>
+
+                        <!-- BOTÓN INSERTAR -->
+                        <div class="mb-2">
+                            <button class="btn btn-outline-secondary bg-dark" type="submit"
+                                id="btInsertarVinilo">Insertar nuevo vinilo</button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <!--! ***MODIFICAR VINILOS ****-->
+
+                <div class="col-4 ">
+                    <form action="/admin" method="POST" id="fmAdminMdf">
+                        <h5>Modificar vinilo</h5>
+
+                        <!--! *** ISBN ***-->
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="mdfIsbn" class="input-group-text">ISBN</label>
+                            <input type="number" class="form-control" placeholder="" name="mdfIsbn" id="mdfIsbn"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!-- ! *** TÍTULO ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="mdfTitulo" class="input-group-text">Título</label>
+                            <input type="text" class="form-control" placeholder="" name="mdfTitulo" id="mdfTitulo"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** AUTOR ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="mdfAutor" class="input-group-text">Autor</label>
+                            <input type="text" class="form-control" placeholder="" name="mdfAutor" id="mdfAutor"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** GÉNERO***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="mdfGenero" class="input-group-text">Género</label>
+                            <input type="text" class="form-control" placeholder="" name="mdfGenero" id="mdfgenero"
+                                required><br>
+                        </div>
+                        <span></span>
+                        <!--! *** AÑO ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="mdfAnio" class="input-group-text">Año</label>
+                            <input type="number" class="form-control" placeholder="" name="mdfAnio" id="mdfAnio"
+                                required><br>
+                        </div>
+                        <span></span> <span></span>
+                        <!--! *** NÚMERO ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="mdfNumero" class="input-group-text">Número</label>
+                            <input type="number" class="form-control" placeholder="" name="mdfNumero" id="mdfNumero"
+                                aria-describedby="numero" required>
+                        </div>
+                        <span></span>
+
+                        <!--! *** DISCOS ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="mdfDiscos" class="input-group-text">Discos</label>
+                            <input type="text" class="form-control" placeholder="" name="mdfDiscos" id="mdfDiscos"
+                                aria-describedby="mdfDiscos" required>
+                        </div>
+                        <span></span>
+
+                        <!--! *** PRECIO ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="mdfPrecio" class="input-group-text">Precio</label>
+                            <input type="text" class="form-control" placeholder="" name="mdfPrecio" id="mdfPrecio"
+                                aria-describedby="mdfPrecio" required>
+                        </div>
+                        <span></span>
+
+                        <!-- BOTÓN MODIFICAR -->
+                        <div class="mb-2">
+                            <button class="btn btn-outline-secondary bg-dark" type="submit"
+                                id="btInsertarVinilo">Modificar
+                                un
+                                vinilo</button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <!--! BORRAR -->
+                <div class="col-4 ">
+                    <form action="/admin" method="POST" id="fmAdminBorrar">
+
+                        <h5>Borrar vinilo</h5>
+                        <!--! *** ISBN BORRAR ***-->
+
+                        <div class="input-group input-group-sm mb-2">
+                            <label for="borrar" class="input-group-text">ISBN</label>
+                            <input type="number" class="form-control" placeholder="" name="borrar" id="borrar"
+                                required><br>
+                        </div>
+                        <span></span>
+
+                        <span></span>
+                        <!-- botón de borrar vinilo -->
+                        <div class="mb-2">
+                            <input class="btn btn-outline-secondary bg-dark" type="submit" id="btBorrarVinilo"
+                                value="Borrar vinilo">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- INSERTAR EL SCRAPPEO POR NÚMERO -->
+
+                <div class="col-15">
+                    <form action="/admin" method="POST" id="fmAdminScrappeo">
+
+                        <h5>Insertar vinilos auto</h5>
+                        <h7>¿Cuántos quieres insertar?</h7>
+                        <!--! *** ISBN BORRAR ***-->
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                            <label class="form-check-label" for="inlineRadio3">3</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4">
+                            <label class="form-check-label" for="inlineRadio4">4</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5">
+                            <label class="form-check-label" for="inlineRadio1">5</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio10" value="option10">
+                            <label class="form-check-label" for="inlineRadio2">10</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio15" value="option15">
+                            <label class="form-check-label" for="inlineRadio2">15</label>
+                          </div>
+                        <!-- botón insertar scrappeo -->
+                        <div class="mb-2">
+                            <input class="btn btn-outline-secondary bg-dark" type="submit" id="btScrappeoVinilo"
+                                value="Insertar vinilo Auto">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 </main>
 
 
