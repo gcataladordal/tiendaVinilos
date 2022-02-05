@@ -2,65 +2,61 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
+const storage = require("node-sessionstorage");
+
+// ! REQUIRE de BCRYPT
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const pages = {
     home: (req, res) => {
         res.render("pages/home");
     },
+    verTienda: async (req, res) => {
+        let infoDiscos = await obtenerInfoVinilos();
+        res.render("pages/tienda", {infoVinilos: infoDiscos})
+    },
+    verPerfil: (req, res) => {
+        res.render("pages/perfil")
+    },
+    verProducto: async (req, res) => {
+        let infoDisco = await obtenerInfoProducto(req);
+        res.render("pages/producto", {infoProducto: infoDisco})
+    },
+    buscarHist: (req, res) => {
+        res.render("pages/buscarHist")
+    },
+    verCarrito: (req, res) => {
+        res.render("pages/carrito")
+    },
 
-    register: (req, res) => {
+    viewRegister: (req, res) => {
         res.render("pages/registerLogin");
     },
-    insertarUsuario: (req, res) => {
-        let usuario = {
-            nombre: "Antonio",
-            apellidos: "Flores",
-            email: "Pepa",
-            pass: "Antonia Martínez",
-            dni: "12345678A",
-            telefono: "911234567",
-            direccion: "Calle del mar n6, 2G",
-            cp: "28058",
-            poblacion: "Madrid",
-            compras: [
-                "1",
-                "2"
-            ],
-            admin: false
-        }
 
-        let nuevoUsuario = new Usuario(usuario)
+    // insertarProducto: (req, res) => {
+    //     let vinilo = {
+    //         titulo: "A Night At The Opera",
+    //         autor: "Queen",
+    //         genero: "Rock",
+    //         ano: "1975",
+    //         numDisco: "2",
+    //         precio: "44.00€",
+    //         imgUrl: "https://dvfnvgxhycwzf.cloudfront.net/media/SharedImage/imageFull/.f3C7LS6U/SharedImage-53601.jpg?t=96658919e620ce1dee51"
+    //     }
 
-        nuevoUsuario.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta del Usuario");
-            // mongoose.disconnect();
-        });
+    //     let nuevoVinilo = new Producto(vinilo)
 
-        res.send("Ha ido Bien");
+    //     nuevoVinilo.save(function (err) {
+    //         if (err) throw err;
+    //         console.log("Inserción correcta del vinilo");
+    //         // mongoose.disconnect();
+    //     });
 
-    },
-    insertarProducto: (req, res) => {
-        let vinilo = {
-            titulo: "Greatest Hits",
-            autor: "James Brown",
-            genero: "Funk",
-            ano: "1967",
-            numDisco: "2",
-            precio: "65.00€"
-        }
+    //     res.send("Ha ido Bien");
 
-        let nuevoVinilo = new Producto(vinilo)
+    // },
 
-        nuevoVinilo.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta del vinilo");
-            // mongoose.disconnect();
-        });
-
-        res.send("Ha ido Bien");
-
-    },
     insertarCompra: (req, res) => {
         let compra = {
             id_usuario: "1",
@@ -77,101 +73,201 @@ const pages = {
         });
 
         res.send("Ha ido Bien");
-    }, registro: (req, res) => {
+    },
+
+    registro: (req, res) => {
         registrar(req, res);
+    },
+
+    login: (req, res) => {
+        loguear(req, res);
+    },
+    logout: (req,res) =>{
+        storage.removeItem('user');
+        console.log('session logout: ', storage.getItem('user'));
+        res.render("pages/home");
     }
 }
 
+async function obtenerInfoVinilos() {
+    var infoVinilo =  await Producto.find({})
+    
+    return infoVinilo
+}
 
-function registrar(req, res) {
+async function obtenerInfoProducto(req) {
+    var infoProducto = await Producto.find({"id_vinilo": req.body.id_vinilo})
+    return infoProducto
+}
+
+
+
+
+async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
-    var nombre = req.body.nombre;
-    var apellidos = req.body.apellidos;
-    var email = req.body.email;
-    var pass = req.body.password1;
-    var pass2 = req.body.password2;
-    var dni = req.body.dni;
-    var direccion = req.body.direccion;
-    var tlf = req.body.tlf;
-
+    const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
 
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!
     var regExpEmail = new RegExp(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/);
     var regExpPass = new RegExp(/^(?=\w*\d)(?=\w*[a-zA-Z])\S{6,10}$/);
+    var regExpCp = new RegExp(/^\d{5}$/);
     var regExpTlf = new RegExp(/^[0-9]{9}$/); ///^\+34\-[0-9]{9}$/
 
     //! Zona de validaciones
 
-    var nombreOk = regExpName.test(nombre);
-    var apellidosOk = regExpName.test(apellidos);
-    var emailOk = regExpEmail.test(email);
-    var passOk = regExpPass.test(pass);
-    var pass2Ok = regExpPass.test(pass2);
-    var mismoPassOk = pass == pass2;
-    var dniOk = regExpDni.test(dni) && validation_dni(dni);
-    //// var direccionOk = regExpName.test(direccion); NO pasa por validacion
-    var tlfOk = regExpTlf.test(tlf);
-    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n tlf: ${tlfOk}`);
+    const nombreOk = regExpName.test(nombre);
+    const apellidosOk = regExpName.test(apellidos);
+    const emailOk = regExpEmail.test(email);
+    const passOk = regExpPass.test(password);
+    const pass2Ok = regExpPass.test(password2);
+    const mismoPassOk = password == password2;
+    const dniOk = regExpDni.test(dni) && validation_dni(dni);
+    //// const direccionOk = regExpName.test(direccion); NO pasa por validacion
+    const cpOk = regExpCp.test(cp);
+    const tlfOk = regExpTlf.test(tlf);
+    console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
 
-    var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && tlfOk;
+    var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && cpOk && tlfOk;
+    // var ok = nombreOk && apellidosOk && emailOk && dniOk && cpOk && tlfOk;
+
     // console.log(ok);
 
-    // var ok = true;  // Para hacerlo sin validaciones
+    var ok = true;  // Para hacerlo sin validaciones
+    // 47919013P
+
+   
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
-    // if (ok) {
-    //     var listaUsuarios = [];
-    //     var listaMedicos = [];
-    //     MongoClient.connect(url, function (err, db) {
-    //         if (err) throw err;
-    //         var dbo = db.db(mydb);
+    if (ok) {
+        console.log("Entra");
+        const existeDni = await busquedaUsuarioDni(dni);
+        //devuleve {} del usuario de la base de datos, sino es null
+        // console.log("*******************");
 
-    //         dbo.collection(coleccionU).find({ "dni": dni }).toArray(function (err, listaUsuarios) {
-    //             if (err) throw err;
+        // console.log(existeDni);
+        if ((existeDni) == null) {
+            console.log("se registra");
+            var passEnc = "";
+            passEnc = await bcrypt.hash(password, saltRounds);
+            console.log(passEnc);
+            insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
 
-    //             //! --------- Proceso de Registrar al Paciente ---------
-
-    //             if (listaUsuarios[0] == undefined) { //* Sino existe, se inserta
-    //                 dbo.collection(coleccionM).find({}).toArray(function (err, listaMedicos) {
-    //                     if (err) throw err;
-    //                     var randomDc = [];
-    //                     randomDc.push(listaMedicos[caos(0, 3)]); //* Asignación aleatoria de médicos.
-    //                     var idM = JSON.stringify(randomDc[0]._id).replace(/['"]+/g, ''); //* Se le quita las comas, sino añadia ""11rD471"".
-
-    //                     var user = {         //* ------> Formato que se añade a la MONGODB-------
-    //                         dni: dni.replace("-", ""),
-    //                         pass: pass,
-    //                         nombre: nombre,
-    //                         apellidos: apellidos,
-    //                         turno: randomDc[0].turno,
-    //                         id_medico: idM,
-    //                         admin: false
-    //                     }
-
-    //                     //!------- Insertar Usuario ------
-
-    //                     dbo.collection(coleccionU).insertOne(user, function (err, result) {
-    //                         if (err) throw err;
-    //                         db.close();
-    //                         res.sendFile(__dirname + '/registroSuccess.html');
-    //                     });
-    //                 });
-    //             } else { //! ----- Si existe, te lanza a la pg.
-    //                 db.close();
-    //                 res.sendFile(__dirname + '/usuarioExist.html');
-    //             }
-    //         });
-    //     });
-    //     //! ---- Si no todas las validaciones son TRUE --------
-    // } else {
-    //     res.sendFile(__dirname + '/error.html');
-    // }
-
+        } else {
+            console.log("existe usuario");
+        }
+    } else {
+        if (!nombreOk) { console.log("Nombre no válido"); }
+        if (!apellidosOk) { console.log("Apellidos no válido"); }
+        if (!emailOk) { console.log("Email no válido"); }
+        if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+        if (!pass2Ok) { console.log("Pasword no válido"); }
+        if (!mismoPassOk) { console.log(" Passwords no son iguales"); }
+        if (!dniOk) { console.log(" dni no valido"); }
+        if (!cpOk) { console.log(" cp no valido"); }
+        if (!tlfOk) { console.log(" tlf no valido"); }
+    }
 }
 
+
+// ! ********  LOGUEAR*********
+
+async function loguear(req, res) {
+
+    //! ---- Variables de la información del registro -----
+
+    const email2 = req.body.email2;
+    const password3 = req.body.password3;
+
+    //! Expresiones Regulares validaciones:
+
+    var regExpEmail = new RegExp(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/);
+    var regExpPass = new RegExp(/^(?=\w*\d)(?=\w*[a-zA-Z])\S{6,10}$/);
+
+    //! Zona de validaciones
+
+    const emailOk = regExpEmail.test(email2);
+    const passOk = regExpPass.test(password3);
+
+    // console.log(`email ${emailOk} \n pass:${passOk} \n pass:${pass2Ok}`);
+    var ok = emailOk && passOk;
+    // var ok = true;  // Para hacerlo sin validaciones
+    // 47919013P
+    // //! ---- SI TODAS VALIDACIONES TRUE --------
+    if (ok) {
+        // Busca en BD si existe ese mail
+        const existeEmail = await busquedaUsuarioEmail(email2);
+
+        if ((existeEmail[0]) == undefined) {
+            console.log("Registrate");
+        } else {
+            // console.log("Eres TU y tu pass del bd es"+ existeEmail[0].pass);
+            // console.log("pass? " + existeEmail[0].pass);
+            var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
+            if (mismoPass) {
+
+                if (existeEmail[0].admin) {
+                    console.log("Hola ADMIN!!");
+                    res.render("pages/admin");
+                }else{
+                    storage.setItem('user', existeEmail[0]);
+                    console.log('session logeado: ', storage.getItem('user'))
+                    console.log("Hola, logueaste usuario!!");
+                    res.render("pages/home");
+                }
+            } else {
+                console.log("Olvidates tu pass???");
+            }
+        }
+    } else {
+        if (!emailOk) { console.log("Email no válido"); }
+        if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+    }
+}
+
+
+async function busquedaUsuarioDni(dni) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    const datos = await Usuario.findOne({ dni: dni });
+    return datos;
+}
+
+async function busquedaUsuarioEmail(email) {
+    const datos2 = await Usuario.find({ email: email });
+    return datos2;
+}
+
+function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    let usuario = {
+        nombre: nombre,
+        apellidos: apellidos,
+        email: email,
+        pass: pass, //encriptar antes
+        dni: dni,
+        telefono: tlf,
+        direccion: direccion,
+        cp: cp,
+        poblacion: poblacion,
+        compras: [],
+        admin: false
+    }
+
+    let nuevoUsuario = new Usuario(usuario)
+
+    nuevoUsuario.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del Usuario ${nombre}`);
+        // mongoose.disconnect();
+    });
+
+    res.render("pages/registerLogin");
+
+}
 
 // ******** VALIDACIONES  ************
 
