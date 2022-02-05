@@ -23,6 +23,9 @@ router.get("/buscarHist",pages.buscarHist);
 // // Viene del formulario para ver el historial
 // router.post("/historial", pages.historial);
 
+// // Viene de Mi Perfil para modificar datos
+//* router.get("/modDatos", pages.modDatos);
+
 
 
 // router.get("/insertarProducto", pages.insertarProducto)

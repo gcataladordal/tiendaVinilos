@@ -30,9 +30,9 @@ const pages = {
         res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, info: JSON.stringify(req.session)  })
 
     },
-    verPerfil: (req, res) => {
-        console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: JSON.stringify(req.session) });
+    verPerfil: async (req, res) => {
+        let infoDiscos = await obtenerInfoVinilos(); 
+        res.render("pages/perfil", { infoVinilos: infoDiscos });
     },
     verProducto: async (req, res) => {
         console.log("Al dar a verPRODUCTO el valor de sesion es: " + req.session.nombre);
