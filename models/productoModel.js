@@ -8,7 +8,7 @@ const objetoProductoSchema = {
     genero: String,
     ano: String,
     numDisco: String,
-    precio: String,
+    precio: Number,
     imgUrl: String,
 };
 

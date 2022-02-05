@@ -7,6 +7,7 @@ const scrapping2 = require("../scrapper2")
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
+const { redirect } = require("express/lib/response");
 const saltRounds = 10;
 
 
@@ -41,12 +42,15 @@ const pages = {
     },
     buscarHist: (req, res) => {
         console.log("Al dar a BUSCAR HISTORIAL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: JSON.stringify(req.session) });
+        res.render("pages/buscarHist", { info: JSON.stringify(req.session) });
     },
 
     verCarrito: (req, res) => {
         console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
         res.render("pages/carrito", { info: JSON.stringify(req.session) });
+    },
+    verAdmin: (req, res) => {
+        res.render("pages/admin", { info: JSON.stringify(req.session) } )
     },
 
     viewRegister: (req, res) => {
@@ -224,6 +228,7 @@ async function loguear(req, res) {
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
     }
 }
+
 
 function saveSesionStart(req) {
     req.session.id_usuario = "";

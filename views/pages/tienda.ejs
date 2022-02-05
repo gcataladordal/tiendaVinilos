@@ -4,7 +4,6 @@
 <head>
     <%- include('../partials/head'); %>
     <script>
-       
         function addProducto(id_vinilo) {
             var productos = [];
             if (localStorage.getItem("idProducto") == "") {
@@ -16,6 +15,7 @@
                 localStorage.setItem("idProducto", productos );
             }
         }
+
    </script>
 </head>
 
@@ -65,8 +65,8 @@
                 <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
                     <div class="col-lg mt-3">
                         <div class="card" style="width: 18rem;">
-                            <form action="/verProducto" method="POST">
-                                <input type="image"  class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+                            
+                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
                             
                                 <div class="card-body">
                                     <h5 class="card-title">
@@ -81,7 +81,7 @@
                                     </p>
                                     <a href="#" class="btn btn-dark">Ver en la web</a>
                                 </div>
-                            </form>
+                            
                         </div>
                     </div>
                     <% } %>
