@@ -12,8 +12,17 @@
 
 <main>
     <div class="container">
-        <h1>Aquí va el contenido</h1>
-        <p>Más de lo mismo</p>
+        <h1>Resumen del pedido:</h1>
+        <div class="container">
+            <% for(let i = 0 ; i < infoProductos.length ; i++) { %>
+                
+                <p><%= infoProductos[i][0].titulo %>  </p> 
+                <p><%= infoProductos[i][0].precio %>  </p>
+               
+       
+        <% } %>
+        </div>
+        <button class="btn btn-dark">Confirmar Compra</button>
     </div>
 </main>
 
