@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
-const storage = require("node-sessionstorage");
+const scrapping2 = require("../scrapper2")
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
@@ -14,7 +14,9 @@ const pages = {
     },
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/tienda", {infoVinilos: infoDiscos})
+        let infoDiscosScrapping = await scrapping2;
+        console.log(infoDiscosScrapping)
+        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
     },
     verPerfil: (req, res) => {
         res.render("pages/perfil")
@@ -83,8 +85,6 @@ const pages = {
         loguear(req, res);
     },
     logout: (req,res) =>{
-        storage.removeItem('user');
-        console.log('session logout: ', storage.getItem('user'));
         res.render("pages/home");
     }
 }

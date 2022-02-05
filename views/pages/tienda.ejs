@@ -43,7 +43,34 @@
                     <% } %>
             </div>
         </div>
-
+        <div class="container mt-5">
+            <h1>Vinilos scrapeados</h1>
+            <div class="row justify-content-around">
+                <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
+                    <div class="col-lg mt-3">
+                        <div class="card" style="width: 18rem;">
+                            <form action="/verProducto" method="POST">
+                                <input type="image"  class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+                            
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= infoDiscosScrapeados[i].titulo %>
+                                    </h5>
+                                    <p class="card-text">
+                                        <%= infoDiscosScrapeados[i].autor %>
+                                        <br>
+                                        <%= infoDiscosScrapeados[i].ano %>
+                                        <br>
+                                        <%= infoDiscosScrapeados[i].precio %>
+                                    </p>
+                                    <a href="#" class="btn btn-primary">Ver en la web</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
     </main>
 
     <footer>
