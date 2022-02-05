@@ -3,10 +3,24 @@
 
 <head>
     <%- include('../partials/head'); %>
+    <script>
+       
+        function addProducto(id_vinilo) {
+            var productos = [];
+            if (localStorage.getItem("idProducto") == "") {
+                localStorage.setItem("idProducto", id_vinilo)
+            } else {
+                console.log(id_vinilo)
+                productos.push(localStorage.getItem("idProducto"));
+                productos.push(id_vinilo);
+                localStorage.setItem("idProducto", productos );
+            }
+        }
+   </script>
 </head>
 
 <body>
-
+    
     <header>
         <%- include('../partials/header'); %>
     </header>
@@ -33,9 +47,11 @@
                                         <%= infoVinilos[i].titulo %>
                                     </h5>
                                     <p class="card-text">
+                                        <%= infoVinilos[i].autor %>
+                                        <br>
                                         <%= infoVinilos[i].precio %>
                                     </p>
-                                    <a href="#" class="btn btn-primary" onclick="addProducto()">Añadir al carrito</a>
+                                    <a href="#" class="btn btn-dark" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al carrito</a>
                                 </div>
                             </form>
                         </div>
@@ -63,7 +79,7 @@
                                         <br>
                                         <%= infoDiscosScrapeados[i].precio %>
                                     </p>
-                                    <a href="#" class="btn btn-primary">Ver en la web</a>
+                                    <a href="#" class="btn btn-dark">Ver en la web</a>
                                 </div>
                             </form>
                         </div>
