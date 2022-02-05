@@ -1,8 +1,4 @@
 {
-  "name": "tiendavinilos",
-  "version": "1.0.0",
-  "description": "enlaces bootstrap",
-  "main": "scrapper.js",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.1",
@@ -16,21 +12,5 @@
     "mongoose": "^6.2.0",
     "mongoose-sequence": "^5.3.1",
     "puppeteer": "^13.1.3"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gcataladordal/tiendaVinilos.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gcataladordal/tiendaVinilos/issues"
-  },
-  "homepage": "https://github.com/gcataladordal/tiendaVinilos#readme"
+  }
 }
