@@ -5,6 +5,7 @@ const pages = require("../controllers/pages.controllers")
 //Rutas 
 // Botón a página de inicio
 router.get("/",pages.home);
+router.get("/home", pages.verHome)
 // Botón a tienda
 router.get("/tienda",pages.verTienda)
 // // Viene de un formulario a vista de admin

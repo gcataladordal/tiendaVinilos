@@ -9,43 +9,49 @@ const scrapping2 = require("../scrapper2")
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+
+
 const pages = {
     home: (req, res) => {
-        console.log("Al dar a Home el valor de sesion es: " + req.session.nombre);
-        res.render("pages/home", { info: req.session });
+        saveSesionStart(req)
+        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
+        res.render("pages/home", { info: JSON.stringify(req.session) });
+    },
+    verHome: (req,res) => {
+        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
+        res.render("pages/home", { info: JSON.stringify(req.session) });
     },
     verTienda: async (req, res) => {
         console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping2;
-        console.log(infoDiscosScrapping)
-        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
+        console.log(req.session)
+        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, info: JSON.stringify(req.session)  })
 
     },
     verPerfil: (req, res) => {
         console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: req.session });
+        res.render("pages/perfil", { info: JSON.stringify(req.session) });
     },
     verProducto: async (req, res) => {
         console.log("Al dar a verPRODUCTO el valor de sesion es: " + req.session.nombre);
 
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", { infoProducto: infoDisco, info: req.session });
-        res.render("pages/buscarHist");
+        res.render("pages/producto", { infoProducto: infoDisco,  info : JSON.stringify(req.session) });
     },
     buscarHist: (req, res) => {
         console.log("Al dar a BUSCAR HISTORIAL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: req.session });
+        res.render("pages/perfil", { info: JSON.stringify(req.session) });
     },
 
     verCarrito: (req, res) => {
         console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
-        res.render("pages/carrito", { info: req.session });
+        res.render("pages/carrito", { info: JSON.stringify(req.session) });
     },
 
     viewRegister: (req, res) => {
         console.log("Al dar a LOGUEAR/REGISTRAR el valor de sesion es: " + req.session.nombre);
-        res.render("pages/registerLogin", { info: req.session });
+        res.render("pages/registerLogin", { info: JSON.stringify(req.session) });
     },
 
     insertarCompra: (req, res) => {
@@ -74,9 +80,9 @@ const pages = {
         loguear(req, res);
     },
     logout: (req, res) => {
-        req.session.destroy();
-        console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session);
-        res.render("pages/home", { info: req.session });
+        saveSesionStart(req)
+        console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session.nombre);
+        res.render("pages/home", { info: JSON.stringify(req.session) });
 
     }
 }
@@ -207,7 +213,7 @@ async function loguear(req, res) {
                     saveSesion(logueado, req);
 
                     console.log(req.session);
-                    res.render("pages/home", { info: req.session });
+                    res.render("pages/home", { info: JSON.stringify(req.session) });
                 }
             } else {
                 console.log("Olvidates tu pass???");
@@ -219,19 +225,35 @@ async function loguear(req, res) {
     }
 }
 
+function saveSesionStart(req) {
+    req.session.id_usuario = "";
+    req.session.nombre = "";
+    req.session.apellidos = "";
+    req.session.email = "";
+    req.session.dni = "";
+    req.session.telefono = "";
+    req.session.direccion = "";
+    req.session.cp = "";
+    req.session.poblacion = "";
+    req.session.carrito = [];
+    req.session.precioCompra = 0;
+    req.session.admin = false;
+    req.session.save();
+}
+
 function saveSesion(datosUser, req) {
     req.session.id_usuario = datosUser.id_usuario;
     req.session.nombre = datosUser.nombre,
-        req.session.apellidos = datosUser.apellidos,
-        req.session.email = datosUser.email,
-        req.session.dni = datosUser.dni,
-        req.session.telefono = datosUser.telefono,
-        req.session.direccion = datosUser.direccion,
-        req.session.cp = datosUser.cp,
-        req.session.poblacion = datosUser.poblacion,
-        req.session.carrito = [],
-        req.session.precioCompra = 0,
-        req.session.admin = false
+    req.session.apellidos = datosUser.apellidos,
+    req.session.email = datosUser.email,
+    req.session.dni = datosUser.dni,
+    req.session.telefono = datosUser.telefono,
+    req.session.direccion = datosUser.direccion,
+    req.session.cp = datosUser.cp,
+    req.session.poblacion = datosUser.poblacion,
+    req.session.carrito = [],
+    req.session.precioCompra = 0,
+    req.session.admin = false
     req.session.save();
 }
 async function busquedaUsuarioDni(dni) {
