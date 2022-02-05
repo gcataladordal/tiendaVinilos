@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
-const scrapping2 = require("../scrapper2")
+const scrapping = require("../scrapper")
 
 
 // ! REQUIRE de BCRYPT
@@ -25,7 +25,7 @@ const pages = {
     verTienda: async (req, res) => {
         console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
-        let infoDiscosScrapping = await scrapping2;
+        let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
         console.log(req.session)
         res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, info: JSON.stringify(req.session)  })
 
