@@ -3,19 +3,19 @@ const puppeteer = require('puppeteer')
 const mongoose = require("mongoose");
 const urlBD = "mongodb://localhost:27017/vinilosFull";
 //const Producto = require("./models/productoModel");
-const objetoProductoSchema = {
-    titulo: String,
-    autor: String,
-    genero: String,
-    ano: String,
-    numDisco: String,
-    precio: String,
-    imgUrl: String,
-};
-const AutoIncrement = require('mongoose-sequence')(mongoose);
-const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
-productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
-const Producto = mongoose.model("productos", productoSchema);
+// const objetoProductoSchema = {
+//     titulo: String,
+//     autor: String,
+//     genero: String,
+//     ano: String,
+//     numDisco: String,
+//     precio: String,
+//     imgUrl: String,
+// };
+// const AutoIncrement = require('mongoose-sequence')(mongoose);
+//const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
+// productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
+// const Producto = mongoose.model("productos", productoSchema);
 
 
 const extractData = async (url, browser) => {
@@ -40,20 +40,33 @@ const extractData = async (url, browser) => {
 
 const addRecordsWeb = async (num) => {
     try {
-        let randomNumber = Math.floor(Math.random() * (620 - 2)) + 2
+        let randomNumber = Math.floor(Math.random() * (600 - 1)) + 1;
+        console.log(randomNumber)
         let url = "https://recordsale.de/en/genres/jazz/albums?page=" + randomNumber
         const scrapedData = []
-        const browser = await puppeteer.launch({ headless: false });
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         await page.goto(url);
-        // console.log(`Accediendo a ${url}`)
         const productUrls = await // Evalúa la página cargada, crea un array con TODOS los selectores (Funciona como un querySelectorAll) 
             page.$$eval('.release-content > a ', (etiquetaEnlace) => etiquetaEnlace.map(a => a.href));
-        console.log("Todos los enlaces encontrados")
-        console.log(productUrls)
-        const slicedUrls = productUrls.slice(1, num + 1)
-        for (productLink in slicedUrls) {
-            const productsInfo = await extractData(slicedUrls[productLink], browser)
+        const randomLinks = []
+        // obteniendo aleatorios en rango
+        function getRandom() {
+            return Math.floor(Math.random() * productUrls.length)
+        }
+        // checkeando por no repetidos
+        function checkNotRepeat(current, validNumbers) {
+            return validNumbers.includes(current)
+        }
+        while (randomLinks.length < 6) {
+            const randomIndex = getRandom()
+            if (!checkNotRepeat(productUrls[randomIndex], randomLinks))
+                randomLinks.push(productUrls[randomIndex])
+        }
+        console.log("Links aleatorios")
+        console.log(randomLinks)
+        for (productLink in randomLinks) {
+            const productsInfo = await extractData(randomLinks[productLink], browser)
             scrapedData.push(productsInfo);
         }
         console.log("Data scrapeada");
@@ -66,6 +79,19 @@ const addRecordsWeb = async (num) => {
 }
 
 async function addRecordsDB(num) {
+    const objetoProductoSchema = {
+        titulo: String,
+        autor: String,
+        genero: String,
+        ano: String,
+        numDisco: String,
+        precio: String,
+        imgUrl: String,
+    };
+    const AutoIncrement = require('mongoose-sequence')(mongoose);
+    const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
+    productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
+    const Producto = mongoose.model("productos", productoSchema);
     let scrapedData = await addRecordsWeb(num)
     mongoose.connect(urlBD, {
         useNewUrlParser: true,
@@ -83,9 +109,6 @@ async function addRecordsDB(num) {
         })
     }
 }
-
-addRecordsDB(2)
-
 
 const scrapping = {
     addRecordsWeb: addRecordsWeb,

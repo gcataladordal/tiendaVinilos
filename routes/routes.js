@@ -15,13 +15,16 @@ router.get("/buscarHist",pages.buscarHist);
 // // Viene de un formulario a confirmar la compra
 // router.post("/buyConfirm",pages.buyConfirm);
 // // Viene de un botón al carrito
-router.get("/carrito", pages.verCarrito);
+// router.get("/carrito", pages.verCarrito);
 // // Viene de un submit de después de dar al carrito
 // router.get("/datosEnvio", pages.datosEnvio);
 // // Viene del formulario a la factura
 // router.post("/factura",pages.factura)
 // // Viene del formulario para ver el historial
 // router.post("/historial", pages.historial);
+
+// // Viene de Mi Perfil para modificar datos
+//* router.get("/modDatos", pages.modDatos);
 
 
 
@@ -32,7 +35,11 @@ router.get("/insertarCompra", pages.insertarCompra)
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
+
 router.get("/logout", pages.logout);
+
+
+router.post("/verCarrito", pages.verCarrito)
 
 router.post("/registro", pages.registro);
 router.post("/login", pages.login);

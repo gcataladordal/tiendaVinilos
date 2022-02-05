@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
-const scrapping2 = require("../scrapper2")
-
+const scrapping = require("../scrapper")
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
@@ -25,23 +24,31 @@ const pages = {
     },
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
-        let infoDiscosScrapping = await scrapping2;
-        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
+        let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
+        console.log(req.session)
+        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
+
     },
-    verPerfil: (req, res) => {
-        res.render("pages/perfil");
+    verPerfil: async (req, res) => {
+        let infoDiscos = await obtenerInfoVinilos(); 
+        res.render("pages/perfil", { infoVinilos: infoDiscos });
+
     },
+  
     verProducto: async (req, res) => {
         let infoDisco = await obtenerInfoProducto(req);
         res.render("pages/producto");
     },
+  
     buscarHist: (req, res) => {
         res.render("pages/buscarHist");
     },
 
-    verCarrito: (req, res) => {
-        res.render("pages/carrito");
+    verCarrito: async (req, res) => {
+        let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
+        res.render("pages/carrito", { infoProductos: arrayProductos });
     },
+  
     verAdmin: (req, res) => {
         res.render("pages/admin");
     },
@@ -92,7 +99,16 @@ async function obtenerInfoProducto(req) {
     return infoProducto;
 }
 
-
+async function obtenerProductosCarrito(ids) {
+    let arrayIds = ids.split(",");
+    let arrayProductos = [];
+    for (let i = 0; i < arrayIds.length; i++) {
+        let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+        arrayProductos.push(infoProductos);
+    }
+    
+    return arrayProductos;
+}
 
 
 async function registrar(req, res) {
