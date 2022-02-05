@@ -7,7 +7,7 @@
   "genero": "Funk",
   "ano": "1981",
   "numDisco": "2",
-  "precio": "15.00€",
+  "precio": 15,
   "imgUrl": "https://i.discogs.com/vCJhbUUeWdiVQ2BTn6cJurasl3re9cGUK6mV67dnWcs/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWltYWdlcy9SLTIw/ODcwMjQtMTUxMDg1/ODk4NC02NjcwLmpw/ZWc.jpeg",
   "id_vinilo": 1
 },{
@@ -19,7 +19,7 @@
   "genero": "Funk",
   "ano": "1969",
   "numDisco": "1",
-  "precio": "23.00€",
+  "precio": 23,
   "imgUrl": "https://i.scdn.co/image/ab67616d0000b2739478f74daa73c832b5898e27",
   "id_vinilo": 2
 },{
@@ -31,7 +31,7 @@
   "genero": "Funk",
   "ano": "1970",
   "numDisco": "2",
-  "precio": "32.00€",
+  "precio": 32,
   "imgUrl": "https://m.media-amazon.com/images/I/71cBrakTspL._SL1200_.jpg",
   "id_vinilo": 3
 },{
@@ -43,7 +43,7 @@
   "genero": "Hip Hop",
   "ano": "1994",
   "numDisco": "4",
-  "precio": "54.00€",
+  "precio": 54,
   "imgUrl": "https://i.discogs.com/CpsB0b_yMIB8SyxH41SkXWvX-18GCHXDqyWFlhjz3qQ/rs:fit/g:sm/q:90/h:593/w:600/czM6Ly9kaXNjb2dz/LWltYWdlcy9SLTg0/ODkyMDktMTQ2MjYy/NzU5MC03NTQwLmpw/ZWc.jpeg",
   "id_vinilo": 4
 },{
@@ -55,7 +55,7 @@
   "genero": "Rock",
   "ano": "1973",
   "numDisco": "2",
-  "precio": "173.00€",
+  "precio": 173,
   "imgUrl": "https://cdn.grupoelcorteingles.es/SGFM/dctm/MEDIA03/202003/11/00105111151543____3__1200x1200.jpg",
   "id_vinilo": 5
 },{
@@ -67,7 +67,7 @@
   "genero": "Hip Hop",
   "ano": "1993",
   "numDisco": "2",
-  "precio": "47.00€",
+  "precio": 47,
   "imgUrl": "https://i.ebayimg.com/images/g/yKAAAOSwrAJhH31p/s-l640.jpg",
   "id_vinilo": 6
 },{
@@ -79,7 +79,7 @@
   "genero": "Hip Hop",
   "ano": "1996",
   "numDisco": "4",
-  "precio": "53.00€",
+  "precio": 53,
   "imgUrl": "https://m.media-amazon.com/images/I/81y8N1Dq+DL._SL1500_.jpg",
   "id_vinilo": 7
 },{
@@ -91,7 +91,7 @@
   "genero": "Rock",
   "ano": "1991",
   "numDisco": "2",
-  "precio": "63.00€",
+  "precio": 63,
   "imgUrl": "http://community.fansshare.com/pic52/w/nirvana--film-/1200/13066_nirvana_nevermind_album_cover_lp_cd.jpg",
   "id_vinilo": 8
 },{
@@ -103,7 +103,7 @@
   "genero": "Blues",
   "ano": "1970",
   "numDisco": "2",
-  "precio": "44.00€",
+  "precio": 44,
   "imgUrl": "https://www.rhino.com/sites/g/files/g2000012691/files/styles/square/public/products/603497985319.jpg?itok=vIzGvsr6",
   "id_vinilo": 10
 },{
@@ -115,7 +115,7 @@
   "genero": "Blues",
   "ano": "1959",
   "numDisco": "2",
-  "precio": "12.00€",
+  "precio": 12,
   "imgUrl": "https://i.discogs.com/NMvqsqG1kCSd0QbMY_D83hYaA7iOn-L7smyvYbVWWoU/rs:fit/g:sm/q:90/h:595/w:595/czM6Ly9kaXNjb2dz/LWltYWdlcy9SLTUy/OTEwNjAtMTU3MDM3/OTY4OS0yODUxLmpw/ZWc.jpeg",
   "id_vinilo": 11
 },{
@@ -127,7 +127,7 @@
   "genero": "Blues",
   "ano": "1957",
   "numDisco": "2",
-  "precio": "19.00€",
+  "precio": 19,
   "imgUrl": "https://img14.shop-pro.jp/PA01306/842/product/94112685.jpg?cmsp_timestamp=20151105192507",
   "id_vinilo": 12
 },{
@@ -139,7 +139,7 @@
   "genero": "Jazz",
   "ano": "1940",
   "numDisco": "4",
-  "precio": "26.00€",
+  "precio": 26,
   "imgUrl": "https://farm5.static.flickr.com/4698/39446428085_c4a4c40062.jpg",
   "id_vinilo": 13
 },{
@@ -151,7 +151,7 @@
   "genero": "Jazz",
   "ano": "1951",
   "numDisco": "2",
-  "precio": "34.00€",
+  "precio": 34,
   "imgUrl": "https://e.snmc.io/i/600/s/dbab66164973789ca334fcb454753351/5642810/duke-ellington-and-his-orchestra-masterpieces-by-ellington-Cover-Art.jpg",
   "id_vinilo": 14
 },{
@@ -163,7 +163,7 @@
   "genero": "Rock",
   "ano": "1975",
   "numDisco": "2",
-  "precio": "44.00€",
+  "precio": 44,
   "imgUrl": "https://dvfnvgxhycwzf.cloudfront.net/media/SharedImage/imageFull/.f3C7LS6U/SharedImage-53601.jpg?t=96658919e620ce1dee51",
   "id_vinilo": 15
 }]
