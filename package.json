@@ -7,7 +7,7 @@
     "express": "^4.17.2",
     "express-session": "^1.17.2",
     "inspector": "^0.5.0",
-    "jest": "^27.4.7",
+    "jest": "^27.5.0",
     "jsdoc": "^3.6.10",
     "mongodb": "^4.3.1",
     "mongoose": "^6.2.0",

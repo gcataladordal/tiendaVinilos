@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
-
+const scrapping2 = require("../scrapper2")
 
 
 // ! REQUIRE de BCRYPT
@@ -17,7 +17,10 @@ const pages = {
     verTienda: async (req, res) => {
         console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/tienda", { infoVinilos: infoDiscos, info: req.session });
+        let infoDiscosScrapping = await scrapping2;
+        console.log(infoDiscosScrapping)
+        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
+
     },
     verPerfil: (req, res) => {
         console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
@@ -70,11 +73,11 @@ const pages = {
     login: (req, res) => {
         loguear(req, res);
     },
-
     logout: (req, res) => {
         req.session.destroy();
         console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session);
         res.render("pages/home", { info: req.session });
+
     }
 }
 
