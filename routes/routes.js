@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const pages = require("../controllers/pages.controllers")
-// const user = require("../controllers/user.controllers")
  
 
 //Rutas 
@@ -39,7 +38,6 @@ router.get("/logout", pages.logout);
 // // Viene de un botón de perfil
 router.get("/perfil", pages.verPerfil);
 // // Viene de un botón del producto y te lleva a la info de ese producto
-router.post("/verProducto", pages.verProducto)
+router.post("/verProducto", pages.verProducto);
 
- 
 module.exports = router;

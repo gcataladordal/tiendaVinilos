@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
-const storage = require("node-sessionstorage");
+
+
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
@@ -10,52 +11,39 @@ const saltRounds = 10;
 
 const pages = {
     home: (req, res) => {
-        res.render("pages/home");
+        console.log("Al dar a Home el valor de sesion es: " + req.session.nombre);
+        res.render("pages/home", { info: req.session });
     },
     verTienda: async (req, res) => {
+        console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/tienda", {infoVinilos: infoDiscos})
+        res.render("pages/tienda", { infoVinilos: infoDiscos, info: req.session });
     },
     verPerfil: (req, res) => {
-        res.render("pages/perfil")
+        console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
+        res.render("pages/perfil", { info: req.session });
     },
     verProducto: async (req, res) => {
+        console.log("Al dar a verPRODUCTO el valor de sesion es: " + req.session.nombre);
+
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", {infoProducto: infoDisco})
+        res.render("pages/producto", { infoProducto: infoDisco, info: req.session });
+        res.render("pages/buscarHist");
     },
     buscarHist: (req, res) => {
-        res.render("pages/buscarHist")
+        console.log("Al dar a BUSCAR HISTORIAL el valor de sesion es: " + req.session.nombre);
+        res.render("pages/perfil", { info: req.session });
     },
+
     verCarrito: (req, res) => {
-        res.render("pages/carrito")
+        console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
+        res.render("pages/carrito", { info: req.session });
     },
 
     viewRegister: (req, res) => {
-        res.render("pages/registerLogin");
+        console.log("Al dar a LOGUEAR/REGISTRAR el valor de sesion es: " + req.session.nombre);
+        res.render("pages/registerLogin", { info: req.session });
     },
-
-    // insertarProducto: (req, res) => {
-    //     let vinilo = {
-    //         titulo: "A Night At The Opera",
-    //         autor: "Queen",
-    //         genero: "Rock",
-    //         ano: "1975",
-    //         numDisco: "2",
-    //         precio: "44.00€",
-    //         imgUrl: "https://dvfnvgxhycwzf.cloudfront.net/media/SharedImage/imageFull/.f3C7LS6U/SharedImage-53601.jpg?t=96658919e620ce1dee51"
-    //     }
-
-    //     let nuevoVinilo = new Producto(vinilo)
-
-    //     nuevoVinilo.save(function (err) {
-    //         if (err) throw err;
-    //         console.log("Inserción correcta del vinilo");
-    //         // mongoose.disconnect();
-    //     });
-
-    //     res.send("Ha ido Bien");
-
-    // },
 
     insertarCompra: (req, res) => {
         let compra = {
@@ -82,22 +70,22 @@ const pages = {
     login: (req, res) => {
         loguear(req, res);
     },
-    logout: (req,res) =>{
-        storage.removeItem('user');
-        console.log('session logout: ', storage.getItem('user'));
-        res.render("pages/home");
+
+    logout: (req, res) => {
+        req.session.destroy();
+        console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session);
+        res.render("pages/home", { info: req.session });
     }
 }
 
 async function obtenerInfoVinilos() {
-    var infoVinilo =  await Producto.find({})
-    
-    return infoVinilo
+    var infoVinilo = await Producto.find({})
+    return infoVinilo;
 }
 
 async function obtenerInfoProducto(req) {
-    var infoProducto = await Producto.find({"id_vinilo": req.body.id_vinilo})
-    return infoProducto
+    var infoProducto = await Producto.find({ "id_vinilo": req.body.id_vinilo })
+    return infoProducto;
 }
 
 
@@ -137,8 +125,6 @@ async function registrar(req, res) {
 
     var ok = true;  // Para hacerlo sin validaciones
     // 47919013P
-
-   
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
     if (ok) {
@@ -207,15 +193,18 @@ async function loguear(req, res) {
             // console.log("pass? " + existeEmail[0].pass);
             var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
             if (mismoPass) {
-
+                //ExisteEmail[0] = { Toda la info del usuario }
                 if (existeEmail[0].admin) {
                     console.log("Hola ADMIN!!");
                     res.render("pages/admin");
-                }else{
-                    storage.setItem('user', existeEmail[0]);
-                    console.log('session logeado: ', storage.getItem('user'))
-                    console.log("Hola, logueaste usuario!!");
-                    res.render("pages/home");
+                } else {
+
+                    var logueado = existeEmail[0];
+                    console.log(existeEmail[0].id_usuario);
+                    saveSesion(logueado, req);
+
+                    console.log(req.session);
+                    res.render("pages/home", { info: req.session });
                 }
             } else {
                 console.log("Olvidates tu pass???");
@@ -227,7 +216,21 @@ async function loguear(req, res) {
     }
 }
 
-
+function saveSesion(datosUser, req) {
+    req.session.id_usuario = datosUser.id_usuario;
+    req.session.nombre = datosUser.nombre,
+        req.session.apellidos = datosUser.apellidos,
+        req.session.email = datosUser.email,
+        req.session.dni = datosUser.dni,
+        req.session.telefono = datosUser.telefono,
+        req.session.direccion = datosUser.direccion,
+        req.session.cp = datosUser.cp,
+        req.session.poblacion = datosUser.poblacion,
+        req.session.carrito = [],
+        req.session.precioCompra = 0,
+        req.session.admin = false
+    req.session.save();
+}
 async function busquedaUsuarioDni(dni) {
     dni = dni.replace("-", "");
     dni = dni.toUpperCase();
@@ -264,9 +267,7 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         console.log(`Inserción correcta del Usuario ${nombre}`);
         // mongoose.disconnect();
     });
-
     res.render("pages/registerLogin");
-
 }
 
 // ******** VALIDACIONES  ************
