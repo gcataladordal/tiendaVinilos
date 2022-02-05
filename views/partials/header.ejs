@@ -30,7 +30,11 @@
                 <a class="nav-link link-info" href="/buscarHist">Ver mi historial</a>
                 <a class="nav-link link-info" id="miPerfil" href="/perfil">Mi Perfil</a>
                 <a class="nav-link link-info" id="logout" href="/logout">Logout</a>
-                <a class="nav-link link-info" id="carrito" href="/carrito">Carrito</a>
+                <form id="formCarrito" method="POST" action="/verCarrito">
+                    <input type="hidden" name="carritoData" id="inputCarrito" value="">
+                    <a href="#" class="nav-link link-info" onclick=recuperarCarrito() id="carrito" type="submit">Carrito</a>
+                </form>
+                
             </div>
         </div>
     </div>
@@ -77,3 +81,12 @@
     </div>
 </div>
 
+<script>
+    function recuperarCarrito(){
+        var carritoRecuperado = localStorage.getItem("idProducto");
+        document.getElementById("inputCarrito").value = carritoRecuperado;
+        document.getElementById("formCarrito").submit();
+    }
+    
+    
+</script>

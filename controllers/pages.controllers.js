@@ -45,9 +45,11 @@ const pages = {
         res.render("pages/buscarHist", { info: JSON.stringify(req.session) });
     },
 
-    verCarrito: (req, res) => {
-        console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
-        res.render("pages/carrito", { info: JSON.stringify(req.session) });
+    verCarrito: async (req, res) => {
+        let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
+        
+
+        res.render("pages/carrito", { infoProductos: arrayProductos });
     },
     verAdmin: (req, res) => {
         res.render("pages/admin", { info: JSON.stringify(req.session) } )
@@ -101,7 +103,16 @@ async function obtenerInfoProducto(req) {
     return infoProducto;
 }
 
-
+async function obtenerProductosCarrito(ids) {
+    let arrayIds = ids.split(",");
+    let arrayProductos = [];
+    for (let i = 0; i < arrayIds.length; i++) {
+        let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+        arrayProductos.push(infoProductos);
+    }
+    
+    return arrayProductos;
+}
 
 
 async function registrar(req, res) {

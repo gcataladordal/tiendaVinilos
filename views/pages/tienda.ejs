@@ -3,20 +3,7 @@
 
 <head>
     <%- include('../partials/head'); %>
-    <script>
-        function addProducto(id_vinilo) {
-            var productos = [];
-            if (localStorage.getItem("idProducto") == "") {
-                localStorage.setItem("idProducto", id_vinilo)
-            } else {
-                console.log(id_vinilo)
-                productos.push(localStorage.getItem("idProducto"));
-                productos.push(id_vinilo);
-                localStorage.setItem("idProducto", productos );
-            }
-        }
-
-   </script>
+    
 </head>
 
 <body>
@@ -51,7 +38,7 @@
                                         <br>
                                         <%= infoVinilos[i].precio %>
                                     </p>
-                                    <a href="#" class="btn btn-dark" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al carrito</a>
+                                    <input type="button" class="btn btn-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
                                 </div>
                             </form>
                         </div>
@@ -66,6 +53,7 @@
                 <% if (infoDiscosScrapeados[i] !== undefined){ %>
                                 <div class="col-lg mt-3">
                                 <div class="card" style="width: 18rem;">
+
                                 <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
                                 <div class="card-body">
                                     <h5 class="card-title">
@@ -90,7 +78,19 @@
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
+<script>
+        function addProducto(id_vinilo) {
+            var productos = [];
+            if (localStorage.getItem("idProducto") === null) {
+                localStorage.setItem("idProducto", id_vinilo)
+            } else {
+                productos.push(localStorage.getItem("idProducto"));
+                productos.push(id_vinilo);
+                localStorage.setItem("idProducto", productos);
+            }
+        }
 
+   </script>
 </body>
 
 </html>
