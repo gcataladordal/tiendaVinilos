@@ -5,9 +5,9 @@ const pages = require("../controllers/pages.controllers")
 //Rutas 
 // Botón a página de inicio
 router.get("/",pages.home);
-router.get("/home", pages.verHome)
+router.get("/home", pages.verHome);
 // Botón a tienda
-router.get("/tienda",pages.verTienda)
+router.get("/tienda",pages.verTienda);
 // // Viene de un formulario a vista de admin
 // router.post("/admin",pages.admin);
 // // Viene de un botón y va a buscar historial
@@ -32,13 +32,17 @@ router.get("/insertarCompra", pages.insertarCompra)
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
+router.get("/logout", pages.logout);
 
 router.post("/registro", pages.registro);
 router.post("/login", pages.login);
-router.get("/logout", pages.logout);
 // // Viene de un botón de perfil
 router.get("/perfil", pages.verPerfil);
+
+//Direcciona a la pg de admin
 router.get("/admin", pages.verAdmin);
+//Inserta disco
+router.post("/addDisco", pages.addDisco);
 // // Viene de un botón del producto y te lleva a la info de ese producto
 router.post("/verProducto", pages.verProducto);
 

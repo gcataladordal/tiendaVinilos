@@ -13,49 +13,41 @@ const saltRounds = 10;
 
 
 const pages = {
-    home: (req, res) => {
-        saveSesionStart(req)
-        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
+    addDisco: (req, res) => {
+        insertarDisco(req);
     },
-    verHome: (req,res) => {
-        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
+    home: (req, res) => {
+        let infoUser = saveSesionStart();
+        res.render("pages/home", { info: JSON.stringify(infoUser) });
+    },
+    verHome: (req, res) => {
+        res.render("pages/home2");
     },
     verTienda: async (req, res) => {
-        console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping2;
-        console.log(req.session)
-        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, info: JSON.stringify(req.session)  })
-
+        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
     },
     verPerfil: (req, res) => {
-        console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: JSON.stringify(req.session) });
+        res.render("pages/perfil");
     },
     verProducto: async (req, res) => {
-        console.log("Al dar a verPRODUCTO el valor de sesion es: " + req.session.nombre);
-
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", { infoProducto: infoDisco,  info : JSON.stringify(req.session) });
+        res.render("pages/producto");
     },
     buscarHist: (req, res) => {
-        console.log("Al dar a BUSCAR HISTORIAL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/buscarHist", { info: JSON.stringify(req.session) });
+        res.render("pages/buscarHist");
     },
 
     verCarrito: (req, res) => {
-        console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
-        res.render("pages/carrito", { info: JSON.stringify(req.session) });
+        res.render("pages/carrito");
     },
     verAdmin: (req, res) => {
-        res.render("pages/admin", { info: JSON.stringify(req.session) } )
+        res.render("pages/admin");
     },
 
     viewRegister: (req, res) => {
-        console.log("Al dar a LOGUEAR/REGISTRAR el valor de sesion es: " + req.session.nombre);
-        res.render("pages/registerLogin", { info: JSON.stringify(req.session) });
+        res.render("pages/registerLogin");
     },
 
     insertarCompra: (req, res) => {
@@ -84,9 +76,8 @@ const pages = {
         loguear(req, res);
     },
     logout: (req, res) => {
-        saveSesionStart(req)
-        console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session.nombre);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
+        let infoUser = saveSesionStart();
+        res.render("pages/home", { info: JSON.stringify(infoUser) });
 
     }
 }
@@ -209,15 +200,15 @@ async function loguear(req, res) {
                 //ExisteEmail[0] = { Toda la info del usuario }
                 if (existeEmail[0].admin) {
                     console.log("Hola ADMIN!!");
-                    res.render("pages/admin");
+                    console.log(existeEmail[0].id_usuario);
+
+                    let infoUser = saveSesion(existeEmail[0]);
+                    res.render("pages/admin", { info: JSON.stringify(infoUser) });
                 } else {
 
-                    var logueado = existeEmail[0];
                     console.log(existeEmail[0].id_usuario);
-                    saveSesion(logueado, req);
-
-                    console.log(req.session);
-                    res.render("pages/home", { info: JSON.stringify(req.session) });
+                    let infoUser = saveSesion(existeEmail[0]);
+                    res.render("pages/home", { info: JSON.stringify(infoUser) });
                 }
             } else {
                 console.log("Olvidates tu pass???");
@@ -229,37 +220,61 @@ async function loguear(req, res) {
     }
 }
 
+// addDisco:  titulo autor genero ano  numDIsco precio imgUrl
+function insertarDisco(req) {
 
-function saveSesionStart(req) {
-    req.session.id_usuario = "";
-    req.session.nombre = "";
-    req.session.apellidos = "";
-    req.session.email = "";
-    req.session.dni = "";
-    req.session.telefono = "";
-    req.session.direccion = "";
-    req.session.cp = "";
-    req.session.poblacion = "";
-    req.session.carrito = [];
-    req.session.precioCompra = 0;
-    req.session.admin = false;
-    req.session.save();
+    const disco = {
+        titulo: req.body.titulo,
+        autor: req.body.autor,
+        genero: req.body.genero,
+        ano: req.body.ano,
+        numDisco: req.body.numDisco,
+        precio: req.body.precio,
+        imgUrl: req.body.imgUrl
+    }
+
+    let nuevoDisco = new Producto(disco);
+
+    nuevoDisco.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del disco ${disco.titulo}`);
+        // mongoose.disconnect();
+    });
+   
+
+
 }
 
-function saveSesion(datosUser, req) {
-    req.session.id_usuario = datosUser.id_usuario;
-    req.session.nombre = datosUser.nombre,
-    req.session.apellidos = datosUser.apellidos,
-    req.session.email = datosUser.email,
-    req.session.dni = datosUser.dni,
-    req.session.telefono = datosUser.telefono,
-    req.session.direccion = datosUser.direccion,
-    req.session.cp = datosUser.cp,
-    req.session.poblacion = datosUser.poblacion,
-    req.session.carrito = [],
-    req.session.precioCompra = 0,
-    req.session.admin = false
-    req.session.save();
+function saveSesionStart() {
+    let userStart = {
+        id_usuario: "",
+        nombre: "",
+        apellidos: "",
+        email: "",
+        dni: "",
+        telefono: "",
+        direccion: "",
+        cp: "",
+        poblacion: "",
+        admin: false
+    }
+    return userStart;
+}
+
+function saveSesion(datosUser) {
+    let user = {
+        id_usuario: datosUser.id_usuario,
+        nombre: datosUser.nombre,
+        apellidos: datosUser.apellidos,
+        email: datosUser.email,
+        dni: datosUser.dni,
+        telefono: datosUser.telefono,
+        direccion: datosUser.direccion,
+        cp: datosUser.cp,
+        poblacion: datosUser.poblacion,
+        admin: datosUser.admin
+    }
+    return user;
 }
 async function busquedaUsuarioDni(dni) {
     dni = dni.replace("-", "");
@@ -290,7 +305,7 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         admin: false
     }
 
-    let nuevoUsuario = new Usuario(usuario)
+    let nuevoUsuario = new Usuario(usuario);
 
     nuevoUsuario.save(function (err) {
         if (err) throw err;
