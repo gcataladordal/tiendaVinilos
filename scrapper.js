@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer')
 const mongoose = require("mongoose");
 const urlBD = "mongodb://localhost:27017/vinilosFull";
 //const Producto = require("./models/productoModel");
- const objetoProductoSchema = {
+const objetoProductoSchema = {
     titulo: String,
     autor: String,
     genero: String,
@@ -13,7 +13,7 @@ const urlBD = "mongodb://localhost:27017/vinilosFull";
     imgUrl: String,
 };
 const AutoIncrement = require('mongoose-sequence')(mongoose);
-const productoSchema = mongoose.Schema(objetoProductoSchema, {versionKey: false})
+const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
 productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
 const Producto = mongoose.model("productos", productoSchema);
 
@@ -30,6 +30,7 @@ const extractData = async (url, browser) => {
         productData.imgUrl = await page.$eval(".hero-preview > img", imgUrl => imgUrl.src);
         productData.genero = 'Jazz';
         productData.numDisco = '2';
+        productData.url = url
         return productData
     }
     catch (error) {
@@ -37,8 +38,10 @@ const extractData = async (url, browser) => {
     }
 }
 
-const extractUrls = async (url) => {
+const addRecordsWeb = async (num) => {
     try {
+        let randomNumber = Math.floor(Math.random() * (620 - 2)) + 2
+        let url = "https://recordsale.de/en/genres/jazz/albums?page=" + randomNumber
         const scrapedData = []
         const browser = await puppeteer.launch({ headless: false });
         const page = await browser.newPage();
@@ -48,47 +51,44 @@ const extractUrls = async (url) => {
             page.$$eval('.release-content > a ', (etiquetaEnlace) => etiquetaEnlace.map(a => a.href));
         console.log("Todos los enlaces encontrados")
         console.log(productUrls)
-        const fiveUrls = productUrls.slice(1, 5)
-        console.log("Cinco enlaces")
-        console.log(fiveUrls)
-        // fiveUrls.forEach(element => {
-        //     const productsInfo = await extractData(element, browser); 
-        //     scrapedData.push(productsInfo)})
-        for (productLink in fiveUrls) {
-            const productsInfo = await extractData(fiveUrls[productLink], browser)
+        const slicedUrls = productUrls.slice(1, num + 1)
+        for (productLink in slicedUrls) {
+            const productsInfo = await extractData(slicedUrls[productLink], browser)
             scrapedData.push(productsInfo);
         }
         console.log("Data scrapeada");
         console.log(scrapedData);
-        mongoose.connect(urlBD, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
-            .then(() => {
-                console.log("Base de datos de Mongo conectada");
-            })
-            .then(() => {
-                for (let i = 0; i < scrapedData.length; i++) {
-                    let productoScraped = new Producto(scrapedData[i]);
-                    productoScraped.save(function (err) {
-                        if (err) throw err;
-                        console.log("Inserción correcta");
-                        //mongoose.disconnect();
-                })};
-    })
-            .catch ((err) => {
-    console.error(err);
-});
+        return scrapedData
     }
     catch (error) {
-    console.log("Error")
-}
+        console.log("Error")
+    }
 }
 
-extractUrls('https://recordsale.de/en/genres/jazz/albums')
+async function addRecordsDB(num) {
+    let scrapedData = await addRecordsWeb(num)
+    mongoose.connect(urlBD, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+        .then(() => {
+            console.log("Base de datos de Mongo conectada");
+        });
+    for (let i = 0; i < scrapedData.length; i++) {
+        let productoScraped = new Producto(scrapedData[i]);
+        productoScraped.save(function (err) {
+            if (err) throw err;
+            console.log("Inserción correcta");
+            //mongoose.disconnect();
+        })
+    }
+}
+
+addRecordsDB(2)
+
 
 const scrapping = {
-    extractUrls: extractUrls,
-    extractData: extractData
+    addRecordsWeb: addRecordsWeb,
+    addRecordsDB: addRecordsDB
 }
 module.exports = scrapping
