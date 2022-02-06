@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+        <script>
+            function addProducto(id_vinilo) {
+                var productos = [];
+                if (localStorage.getItem("idProducto") == "") {
+                    localStorage.setItem("idProducto", id_vinilo)
+                } else {
+                    console.log(id_vinilo)
+                    productos.push(localStorage.getItem("idProducto"));
+                    productos.push(id_vinilo);
+                    localStorage.setItem("idProducto", productos);
+                }
+            }
+
+        </script>
+</head>
+
+<body>
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="container mt-5">
+            <div class="row justify-content-around">
+                <div class="col-lg mt-3">
+                    <div class="card" style="width: 18rem;">
+                        <form action="/verProducto" method="POST">
+                            <input type="image" class="card-img-top" src=" <%= infoVinilos2.imgUrl %> "
+                                alt="Submit Form">
+                            <input type="hidden" name="id_vinilo" value="<%= infoVinilos2.id_vinilo %>">
+
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= infoVinilos2.titulo %>
+                                </h5>
+                                <p class="card-text">
+                                    <%= infoVinilos2.autor %>
+                                        <br>
+                                        <%= infoVinilos2.precio %>
+                                </p>
+                                <a href="#" class="btn btn-dark"
+                                    onclick="addProducto('<%= infoVinilos2.id_vinilo %>')">Añadir al
+                                    carrito</a>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+
+</html>

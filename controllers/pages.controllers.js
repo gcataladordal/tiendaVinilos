@@ -30,12 +30,20 @@ const pages = {
         res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
 
     },
+    verBusqueda: async (req, res) => {
+    let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
+    res.render("pages/busqueda", {infoVinilos: infoDiscos} )
+    },
+    verBusquedaTitulo: async (req, res) => {
+        let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
+        console.log("Pasamos busqueda")
+        console.log(req.body.titulo)
+        res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
+      },
     verPerfil: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos(); 
         res.render("pages/perfil", { infoVinilos: infoDiscos });
-
     },
-  
     verProducto: async (req, res) => {
         let infoDisco = await obtenerInfoProducto(req);
         res.render("pages/producto", {infoProducto: infoDisco});
@@ -166,6 +174,23 @@ async function obtenerInfoVinilos() {
 async function obtenerInfoProducto(req) {
     var infoProducto = await Producto.find({ "id_vinilo": req.body.id_vinilo })
     return infoProducto;
+}
+
+async function obtenerVinilosGenero(generosCheckados) {
+    let aGeneros = generosCheckados.split(",");
+    let aDiscos = []
+    for (let i = 0; i < aGeneros.length; i++){
+        const vinilosGen = await Producto.find({ genero: aGeneros[i]});
+        vinilosGen.push(aGeneros[i])
+        aDiscos.push(vinilosGen)
+    }
+    console.log(aDiscos)
+    return aDiscos;
+}
+
+async function obtenerViniloTitulo(titulo) {
+    const viniloTit = await Producto.find({ titulo: titulo });
+    return viniloTit;
 }
 
 async function obtenerProductosCarrito(ids) {
@@ -379,6 +404,8 @@ async function busquedaUsuarioEmail(email) {
     const datos2 = await Usuario.find({ email: email });
     return datos2;
 }
+
+
 
 function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
     dni = dni.replace("-", "");
