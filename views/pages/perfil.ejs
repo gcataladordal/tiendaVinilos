@@ -38,8 +38,7 @@
                       <br>
                       <%= infoVinilos[i].precio %>
                   </p>
-                  <a href="#" class="btn btn-dark" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al
-                    carrito</a>
+                  <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
                 </div>
               </form>
             </div>
@@ -55,4 +54,17 @@
 
 </body>
 
+<script>
+  function addProducto(id_vinilo) {
+      var productos = [];
+      if (localStorage.getItem("idProducto") === null) {
+          localStorage.setItem("idProducto", id_vinilo)
+      } else {
+          productos.push(localStorage.getItem("idProducto"));
+          productos.push(id_vinilo);
+          localStorage.setItem("idProducto", productos);
+      }
+  }
+
+</script>
 </html>

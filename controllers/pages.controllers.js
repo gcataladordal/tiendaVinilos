@@ -3,10 +3,12 @@ const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
 const scrapping = require("../scrapper")
+const { createInvoice } = require("../pdfkit/createInvoice")
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
 const { redirect } = require("express/lib/response");
+const { openDelimiter } = require("ejs");
 const saltRounds = 10;
 
 
@@ -25,7 +27,6 @@ const pages = {
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
-        console.log(req.session)
         res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
 
     },
@@ -37,7 +38,7 @@ const pages = {
   
     verProducto: async (req, res) => {
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto");
+        res.render("pages/producto", {infoProducto: infoDisco});
     },
   
     buscarHist: (req, res) => {
@@ -46,35 +47,79 @@ const pages = {
 
     verCarrito: async (req, res) => {
         let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
-        res.render("pages/carrito", { infoProductos: arrayProductos });
+        if (typeof(arrayProductos) === "string"){
+            res.render("pages/carritoVacio");
+        } else {
+            res.render("pages/carrito", { infoProductos: arrayProductos });
+        }
     },
   
     verAdmin: (req, res) => {
         res.render("pages/admin");
     },
+    carritoConfirmado: async (req, res) => {
+        let userInfo = JSON.parse(req.body.userInfo);
+        let idsVinilos = req.body.idsCompra;
+        if (userInfo.nombre === "") {
+            // Usuario NO registrado
+            res.render("pages/datosEnvio", {idsCompra : idsVinilos});
+        } else {
+            // Usuario registrado
+            let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
+            res.render("pages/buyConfirm", { infoCompra: insertarEnCompras });
+        }
 
+    },
+    verFactura: (req, res) => {
+        console.log(req.body.infoUser)
+        console.log(req.body.infoProductos)
+        res.render("pages/factura")
+        // let infoComprador = JSON.parse(req.body.infoUser)
+        // let infoProductos = JSON.parse(req.body.infoProductos)
+        
+
+        // const invoice = {
+        //     shipping: {
+        //       nombre: req.bod,
+        //       direccion: "Calle de la piruleta",
+        //       poblacion: "San Francisco",
+        //       cp: 94111,
+        //       email: "buenas@gmail.com",
+        //     },
+        //     productos: [
+        //       {
+        //         producto: "James Brown",
+        //         titulo: "The Best Of James Brown",
+        //         cantidad: 2,
+        //         precio: 6000
+        //       },
+        //       {
+        //         producto: "ABC",
+        //         titulo: "Jackson 5",
+        //         cantidad: 1,
+        //         precio: 2000
+        //       },
+        //       {
+        //         producto: "Doggystyle",
+        //         titulo: "Snoop Dogg",
+        //         cantidad: 2,
+        //         precio: 6000
+        //       }
+        //     ],
+        //     subtotal: 8000,
+        //     paid: 0,
+        //     invoice_nr: 1234
+        //   };
+          
+        //   createInvoice(invoice, "factura_vinilosFull.pdf");
+          
+
+
+
+    },
     viewRegister: (req, res) => {
         res.render("pages/registerLogin");
     },
-
-    insertarCompra: (req, res) => {
-        let compra = {
-            id_usuario: "1",
-            productos: ["1", "2", "3"],
-            created: Date.now()
-        }
-
-        let nuevaCompra = new Compra(compra)
-
-        nuevaCompra.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta de la nueva compra");
-            // mongoose.disconnect();
-        });
-
-        res.send("Ha ido Bien");
-    },
-
     registro: (req, res) => {
         registrar(req, res);
     },
@@ -85,8 +130,32 @@ const pages = {
     logout: (req, res) => {
         let infoUser = saveSesionStart();
         res.render("pages/home", { info: JSON.stringify(infoUser) });
-
     }
+}
+
+
+async function insertarCompra(idsVinilos, userInfo){
+    var productosComprados = [];
+    let arrayIds = idsVinilos.split(",");
+    
+    for (let i = 0; i < arrayIds.length; i++) {
+        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i]})
+        productosComprados.push(infoVinilo);
+    }
+      
+    let compra = {
+        id_usuario: userInfo.id_usuario,
+        productos: productosComprados,
+        created: new Date()
+    }
+
+    let nuevaCompra = new Compra(compra)
+
+    nuevaCompra.save(function (err) {
+        if (err) throw err;
+        console.log("Inserción correcta de la nueva compra");
+    });
+    return nuevaCompra
 }
 
 async function obtenerInfoVinilos() {
@@ -101,13 +170,20 @@ async function obtenerInfoProducto(req) {
 
 async function obtenerProductosCarrito(ids) {
     let arrayIds = ids.split(",");
-    let arrayProductos = [];
-    for (let i = 0; i < arrayIds.length; i++) {
-        let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
-        arrayProductos.push(infoProductos);
+    if (arrayIds[0] !== "") {
+        let arrayProductos = [];
+        let precioTotal = 0;
+        for (let i = 0; i < arrayIds.length; i++) {
+            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            arrayProductos.push(infoProductos);
+            precioTotal = precioTotal + infoProductos[0].precio
+        }
+        arrayProductos.push(precioTotal)
+        return arrayProductos;
+    } else {
+        let carritoSinProductos = "No has añadido nada al carrito";
+        return carritoSinProductos;
     }
-    
-    return arrayProductos;
 }
 
 
@@ -115,7 +191,7 @@ async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
     const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
-
+    
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!

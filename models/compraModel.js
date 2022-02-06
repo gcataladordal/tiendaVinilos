@@ -5,7 +5,7 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const objetoCompraSchema = {
     id_usuario: String,
     productos: Array,
-    created: Date
+    created: Date,
 };
 
 const compraSchema = mongoose.Schema(objetoCompraSchema, {versionKey: false});

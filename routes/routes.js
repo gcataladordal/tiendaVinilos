@@ -30,15 +30,14 @@ router.get("/buscarHist",pages.buscarHist);
 
 // router.get("/insertarProducto", pages.insertarProducto)
 
-router.get("/insertarCompra", pages.insertarCompra)
 
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
 
 router.get("/logout", pages.logout);
-
-
+router.post("/verFactura", pages.verFactura)
+router.post("/carritoConfirmado", pages.carritoConfirmado)
 router.post("/verCarrito", pages.verCarrito)
 
 router.post("/registro", pages.registro);
