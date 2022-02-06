@@ -15,7 +15,7 @@ function createInvoice(invoice, path) {
 
 function generateHeader(doc) {
   doc
-    .image("logo.png", 50, 45, { width: 50 })
+    .image("", 50, 45, { width: 50 })
     .fillColor("#444444")
     .fontSize(20)
     .text("VinilosFull", 110, 57)

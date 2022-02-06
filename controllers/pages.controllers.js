@@ -62,7 +62,7 @@ const pages = {
     },
 
     verProducto: async (req, res) => {
-        let infoDisco = await obtenerInfoProducto(req);
+        let infoDisco = await obtenerInfoProducto(req.body.id_vinilo);
         res.render("pages/producto", {infoProducto: infoDisco});
     },
 
@@ -95,7 +95,8 @@ const pages = {
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
-            res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
+            
+            res.render("pages/buyConfirm");
         }
 
     },
@@ -105,50 +106,41 @@ const pages = {
         // res.render("pages/registerLogin", { validation: estado });
 
     },
-    verFactura: (req, res) => {
-        console.log(req.body.infoUser);
-        console.log(req.body.infoProductos);
-        res.render("pages/factura")
-        // let infoComprador = JSON.parse(req.body.infoUser)
-        // let infoProductos = JSON.parse(req.body.infoProductos)
+    verFactura: async (req, res) => {
+        // console.log(req.body.infoUser);
+        let infoComprador = JSON.parse(req.body.infoUser);
+        let idsProductosCompra = req.body.infoProductos;
+        let infoProductosFactura = await obtenerInfoProductosFactura(idsProductosCompra)
+        console.log(infoProductosFactura.length)
+        let productos = [];
+        for (let i = 0; i < infoProductosFactura.length - 1; i++) {
+            const prod = {
+                producto: infoProductosFactura[i].autor,
+                titulo: infoProductosFactura[i].titulo,
+                cantidad: 1,
+                precio: infoProductosFactura[i].precio + 100
+            }
+            productos.push(prod)
+        }
         
-
-        // const invoice = {
-        //     shipping: {
-        //       nombre: req.bod,
-        //       direccion: "Calle de la piruleta",
-        //       poblacion: "San Francisco",
-        //       cp: 94111,
-        //       email: "buenas@gmail.com",
-        //     },
-        //     productos: [
-        //       {
-        //         producto: "James Brown",
-        //         titulo: "The Best Of James Brown",
-        //         cantidad: 2,
-        //         precio: 6000
-        //       },
-        //       {
-        //         producto: "ABC",
-        //         titulo: "Jackson 5",
-        //         cantidad: 1,
-        //         precio: 2000
-        //       },
-        //       {
-        //         producto: "Doggystyle",
-        //         titulo: "Snoop Dogg",
-        //         cantidad: 2,
-        //         precio: 6000
-        //       }
-        //     ],
-        //     subtotal: 8000,
-        //     paid: 0,
-        //     invoice_nr: 1234
-        //   };
+        const factura = {
+            shipping: {
+              nombre: infoComprador.nombre,
+              direccion: infoComprador.direccion,
+              poblacion: infoComprador.poblacion,
+              cp: infoComprador.cp,
+              email: infoComprador.email,
+            },
+            productos: productos,
+            subtotal: infoProductosFactura[infoProductosFactura.length-1],
+            paid: 0,
+            invoice_nr: 1
+          };
           
-        //   createInvoice(invoice, "factura_vinilosFull.pdf");
+          createInvoice(factura, "factura_vinilosFull.pdf");
           
 
+        res.render("pages/factura")
 
 
     },
@@ -186,7 +178,6 @@ async function insertarCompra(idsVinilos, userInfo){
     }
 
     let nuevaCompra = new Compra(compra)
-
     nuevaCompra.save(function (err) {
         if (err) throw err;
         console.log("Inserción correcta de la nueva compra");
@@ -199,8 +190,8 @@ async function obtenerInfoVinilos() {
     return infoVinilo;
 }
 
-async function obtenerInfoProducto(req) {
-    var infoProducto = await Producto.find({ "id_vinilo": req.body.id_vinilo })
+async function obtenerInfoProducto(id_vinilo) {
+    var infoProducto = await Producto.find({ "id_vinilo": id_vinilo })
     return infoProducto;
 }
 
@@ -214,6 +205,19 @@ async function obtenerVinilosGenero(generosCheckados) {
     }
     console.log(aDiscos)
     return aDiscos;
+}
+
+async function obtenerInfoProductosFactura(ids) {
+    let arrayIds = ids.split(",");
+    let arrayProductos = [];
+    let precioTotal = 0;
+        for (let i = 0; i < arrayIds.length; i++) {
+            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            arrayProductos.push(infoProductos);
+            precioTotal = precioTotal + infoProductos[0].precio
+    }
+    arrayProductos.push(precioTotal)
+    return arrayProductos;
 }
 
 async function obtenerViniloTitulo(titulo) {

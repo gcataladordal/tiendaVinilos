@@ -34,12 +34,10 @@
     <%- include('../partials/footer'); %>
 </footer>
 <script>
-    let informacionCompra = "<%= infoCompra %>"
-    sessionStorage.setItem("infoCompra", informacionCompra)
     function irFactura() {
         var infoUser = localStorage.getItem("user")
         var idProductos = localStorage.getItem("idProducto")
-       
+        
         document.getElementById("inputUserHiddenFactura").value = infoUser;
         document.getElementById("inputProductosHiddenFactura").value = idProductos;
         document.getElementById("formFactura").submit();
