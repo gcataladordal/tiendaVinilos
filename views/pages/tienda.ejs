@@ -43,6 +43,7 @@
             }
 
         </script>
+
 </head>
 
 <body>
@@ -96,21 +97,22 @@
                     <div class="col-lg mt-3">
                         <div class="card" style="width: 18rem;">
                             <form action="/verProducto" method="POST">
-                                <input type="image" class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> "
-                                    alt="Submit Form">
-                                <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
 
+                                <input type="image"  class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> " alt="Submit Form">
+                                <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
+                            
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoVinilos[i].titulo %>
                                     </h5>
                                     <p class="card-text">
                                         <%= infoVinilos[i].autor %>
-                                            <br>
-                                            <%= infoVinilos[i].precio %>
+
+                                        <br>
+                                        <%= infoVinilos[i].precio %>,00 €
                                     </p>
-                                    <a href="#" class="btn btn-dark"
-                                        onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al carrito</a>
+                                    <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
+
                                 </div>
                             </form>
                         </div>
@@ -121,12 +123,13 @@
         <div class="container mt-5">
             <h1>Vinilos scrapeados</h1>
             <div class="row justify-content-around">
-                <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
-                    <% if (infoDiscosScrapeados[i] !==undefined){ %>
-                        <div class="col-lg mt-3">
-                            <div class="card" style="width: 18rem;">
-                                <input type="image" href="#" class="card-img-top"
-                                    src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+
+            <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
+                <% if (infoDiscosScrapeados[i] !== undefined){ %>
+                                <div class="col-lg mt-3">
+                                <div class="card" style="width: 18rem;">
+
+                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoDiscosScrapeados[i].titulo %>
@@ -138,8 +141,9 @@
                                                 <br>
                                                 <%= infoDiscosScrapeados[i].precio %>
                                     </p>
-                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank”
-                                        class="btn btn-dark">Ver en la web</a>
+
+                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank” class="btn btn-outline-secondary bg-dark">Ver en la web</a>
+
                                 </div>
                             </div>
                         </div>
@@ -151,7 +155,19 @@
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
+<script>
+        function addProducto(id_vinilo) {
+            var productos = [];
+            if (localStorage.getItem("idProducto") === null) {
+                localStorage.setItem("idProducto", id_vinilo)
+            } else {
+                productos.push(localStorage.getItem("idProducto"));
+                productos.push(id_vinilo);
+                localStorage.setItem("idProducto", productos);
+            }
+        }
 
+   </script>
 </body>
 
 </html>
