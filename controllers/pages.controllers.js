@@ -3,31 +3,43 @@ const Producto = require("../models/productoModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
 const scrapping = require("../scrapper")
-
+const { createInvoice } = require("../pdfkit/createInvoice")
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
 const { redirect } = require("express/lib/response");
+const { openDelimiter } = require("ejs");
 const saltRounds = 10;
 
 
 
 const pages = {
+    addDisco: (req, res) => {
+        insertarDisco(req);
+    },
+
+    deleteDisco: (req, res) => {
+        borrarDisco(req);
+    },
+
+    updateDisco: (req, res) => {
+        modificarDisco(req);
+    },
+
     home: (req, res) => {
-        saveSesionStart(req)
-        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
+        let infoUser = saveSesionStart();
+        let estado = "inicio";
+        res.render("pages/home", { info: JSON.stringify(infoUser) });
     },
-    verHome: (req,res) => {
-        console.log("Al dar a Home el valor de sesion es: " + req.session.carrito);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
+
+    verHome: (req, res) => {
+        res.render("pages/home2");
     },
+
     verTienda: async (req, res) => {
-        console.log("Al dar a TIENDA el valor de sesion es: " + req.session.nombre);
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
-        console.log(req.session)
-        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, info: JSON.stringify(req.session)  })
+        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
 
     },
     verBusqueda: async (req, res) => {
@@ -39,53 +51,110 @@ const pages = {
         console.log("Pasamos busqueda")
         console.log(req.body.tituloIntroducido)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
-        },
-    verPerfil: (req, res) => {
-        console.log("Al dar a verPERFIL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/perfil", { info: JSON.stringify(req.session) });
+      },
+      modificarPerfil: (req, res) => {
+      res.render("pages/modDatos")
     },
+
+    verPerfil: async (req, res) => {
+        let infoDiscos = await obtenerInfoVinilos();
+        res.render("pages/perfil", { infoVinilos: infoDiscos });
+    },
+
     verProducto: async (req, res) => {
-        console.log("Al dar a verPRODUCTO el valor de sesion es: " + req.session.nombre);
-
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", { infoProducto: infoDisco,  info : JSON.stringify(req.session) });
+        res.render("pages/producto", {infoProducto: infoDisco});
     },
+
     buscarHist: (req, res) => {
-        console.log("Al dar a BUSCAR HISTORIAL el valor de sesion es: " + req.session.nombre);
-        res.render("pages/buscarHist", { info: JSON.stringify(req.session) });
+        res.render("pages/buscarHist");
     },
 
-    verCarrito: (req, res) => {
-        console.log("Al dar a verCARRITO el valor de sesion es: " + req.session.nombre);
-        res.render("pages/carrito", { info: JSON.stringify(req.session) });
-    },
-    verAdmin: (req, res) => {
-        res.render("pages/admin", { info: JSON.stringify(req.session) } )
-    },
-
-    viewRegister: (req, res) => {
-        console.log("Al dar a LOGUEAR/REGISTRAR el valor de sesion es: " + req.session.nombre);
-        res.render("pages/registerLogin", { info: JSON.stringify(req.session) });
+    verCarrito: async (req, res) => {
+        let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
+        if (typeof(arrayProductos) === "string"){
+            res.render("pages/carritoVacio");
+        } else {
+            res.render("pages/carrito", { infoProductos: arrayProductos });
+        }
     },
 
-    insertarCompra: (req, res) => {
-        let compra = {
-            id_usuario: "1",
-            productos: ["1", "2", "3"],
-            created: Date.now()
+
+    //Al pinchar en el nav para volver
+    volverAdmin: async (req, res) => {
+        let infoUser = req.body.infoAdmin;
+        let infoDiscos = await obtenerInfoVinilos();
+        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos });
+    },
+    carritoConfirmado: async (req, res) => {
+        let userInfo = JSON.parse(req.body.userInfo);
+        let idsVinilos = req.body.idsCompra;
+        if (userInfo.nombre === "") {
+            // Usuario NO registrado
+            res.render("pages/datosEnvio", {idsCompra : idsVinilos});
+        } else {
+            // Usuario registrado
+            let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
+            res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
         }
 
-        let nuevaCompra = new Compra(compra)
-
-        nuevaCompra.save(function (err) {
-            if (err) throw err;
-            console.log("Inserción correcta de la nueva compra");
-            // mongoose.disconnect();
-        });
-
-        res.send("Ha ido Bien");
     },
+    viewRegister: (req, res) => {
+        let estado = "inicio";
+        res.render("pages/registerLogin");
+        // res.render("pages/registerLogin", { validation: estado });
 
+    },
+    verFactura: (req, res) => {
+        console.log(req.body.infoUser);
+        console.log(req.body.infoProductos);
+        res.render("pages/factura")
+        // let infoComprador = JSON.parse(req.body.infoUser)
+        // let infoProductos = JSON.parse(req.body.infoProductos)
+        
+
+        // const invoice = {
+        //     shipping: {
+        //       nombre: req.bod,
+        //       direccion: "Calle de la piruleta",
+        //       poblacion: "San Francisco",
+        //       cp: 94111,
+        //       email: "buenas@gmail.com",
+        //     },
+        //     productos: [
+        //       {
+        //         producto: "James Brown",
+        //         titulo: "The Best Of James Brown",
+        //         cantidad: 2,
+        //         precio: 6000
+        //       },
+        //       {
+        //         producto: "ABC",
+        //         titulo: "Jackson 5",
+        //         cantidad: 1,
+        //         precio: 2000
+        //       },
+        //       {
+        //         producto: "Doggystyle",
+        //         titulo: "Snoop Dogg",
+        //         cantidad: 2,
+        //         precio: 6000
+        //       }
+        //     ],
+        //     subtotal: 8000,
+        //     paid: 0,
+        //     invoice_nr: 1234
+        //   };
+          
+        //   createInvoice(invoice, "factura_vinilosFull.pdf");
+          
+
+
+
+    },
+    viewRegister: (req, res) => {
+        res.render("pages/registerLogin");
+    },
     registro: (req, res) => {
         registrar(req, res);
     },
@@ -93,16 +162,40 @@ const pages = {
     login: (req, res) => {
         loguear(req, res);
     },
-    logout: (req, res) => {
-        saveSesionStart(req)
-        console.log("Al dar logout, nos manda a home. SESION VALOR: " + req.session.nombre);
-        res.render("pages/home", { info: JSON.stringify(req.session) });
 
+    logout: (req, res) => {
+        let infoUser = saveSesionStart();
+        res.render("pages/home", { info: JSON.stringify(infoUser) });
     }
 }
 
+
+async function insertarCompra(idsVinilos, userInfo){
+    var productosComprados = [];
+    let arrayIds = idsVinilos.split(",");
+    
+    for (let i = 0; i < arrayIds.length; i++) {
+        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i]})
+        productosComprados.push(infoVinilo);
+    }
+      
+    let compra = {
+        id_usuario: userInfo.id_usuario,
+        productos: productosComprados,
+        created: new Date()
+    }
+
+    let nuevaCompra = new Compra(compra)
+
+    nuevaCompra.save(function (err) {
+        if (err) throw err;
+        console.log("Inserción correcta de la nueva compra");
+    });
+    return nuevaCompra
+}
+
 async function obtenerInfoVinilos() {
-    var infoVinilo = await Producto.find({})
+    var infoVinilo = await Producto.find({});
     return infoVinilo;
 }
 
@@ -130,12 +223,32 @@ async function obtenerViniloTitulo(titulo) {
     return viniloTit;
 }
 
+async function obtenerProductosCarrito(ids) {
+    let arrayIds = ids.split(",");
+
+    if (arrayIds[0] !== "") {
+        let arrayProductos = [];
+        let precioTotal = 0;
+        for (let i = 0; i < arrayIds.length; i++) {
+            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            arrayProductos.push(infoProductos);
+            precioTotal = precioTotal + infoProductos[0].precio
+        }
+        arrayProductos.push(precioTotal)
+        return arrayProductos;
+    } else {
+        let carritoSinProductos = "No has añadido nada al carrito";
+        return carritoSinProductos;
+    }
+
+}
+
 
 async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
     const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
-
+    
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!
@@ -156,14 +269,14 @@ async function registrar(req, res) {
     //// const direccionOk = regExpName.test(direccion); NO pasa por validacion
     const cpOk = regExpCp.test(cp);
     const tlfOk = regExpTlf.test(tlf);
-    console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
+    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
 
     var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && cpOk && tlfOk;
     // var ok = nombreOk && apellidosOk && emailOk && dniOk && cpOk && tlfOk;
 
     // console.log(ok);
 
-    var ok = true;  // Para hacerlo sin validaciones
+    // var ok = true;  // Para hacerlo sin validaciones
     // 47919013P
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
@@ -171,16 +284,15 @@ async function registrar(req, res) {
         console.log("Entra");
         const existeDni = await busquedaUsuarioDni(dni);
         //devuleve {} del usuario de la base de datos, sino es null
-        // console.log("*******************");
 
-        // console.log(existeDni);
         if ((existeDni) == null) {
             console.log("se registra");
             var passEnc = "";
             passEnc = await bcrypt.hash(password, saltRounds);
             console.log(passEnc);
             insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
-
+            let estado = "correcto";
+            // res.render("pages/registerLogin", { validation: estado });
         } else {
             console.log("existe usuario");
         }
@@ -194,6 +306,8 @@ async function registrar(req, res) {
         if (!dniOk) { console.log(" dni no valido"); }
         if (!cpOk) { console.log(" cp no valido"); }
         if (!tlfOk) { console.log(" tlf no valido"); }
+        let estado = "incorrecto";
+        // res.render("pages/registerLogin", { validation: estado });
     }
 }
 
@@ -229,22 +343,19 @@ async function loguear(req, res) {
         if ((existeEmail[0]) == undefined) {
             console.log("Registrate");
         } else {
-            // console.log("Eres TU y tu pass del bd es"+ existeEmail[0].pass);
-            // console.log("pass? " + existeEmail[0].pass);
+
             var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
             if (mismoPass) {
                 //ExisteEmail[0] = { Toda la info del usuario }
                 if (existeEmail[0].admin) {
                     console.log("Hola ADMIN!!");
-                    res.render("pages/admin");
+                    let infoUser = saveSesion(existeEmail[0]);
+                    let infoDiscos = await obtenerInfoVinilos();
+                    // console.log(`Recoge la info de vinilos al ir a admin: ${infoDiscos}`);
+                    res.render("pages/admin", { info: JSON.stringify(infoUser), infoDisco: infoDiscos });
                 } else {
-
-                    var logueado = existeEmail[0];
-                    console.log(existeEmail[0].id_usuario);
-                    saveSesion(logueado, req);
-
-                    console.log(req.session);
-                    res.render("pages/home", { info: JSON.stringify(req.session) });
+                    let infoUser = saveSesion(existeEmail[0]);
+                    res.render("pages/home", { info: JSON.stringify(infoUser) });
                 }
             } else {
                 console.log("Olvidates tu pass???");
@@ -255,38 +366,91 @@ async function loguear(req, res) {
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
     }
 }
+async function modificarDisco(req) {
+    //Recoge la info del disco a modificar
+    Producto.find({ titulo: req.body.nombreSelect }, function (err, disco) {
+        if (err) throw err;
+        console.log(disco[0]);
+        if (req.body.titulo != "") { disco[0].titulo = req.body.titulo; }
+        if (req.body.autor != "") { disco[0].autor = req.body.autor; }
+        if (req.body.genero != "") { disco[0].genero = req.body.genero; }
+        if (req.body.ano != "") { disco[0].ano = req.body.ano; }
+        if (req.body.numDisco != "") { disco[0].numDisco = req.body.numDisco; }
+        if (req.body.precio != "") { disco[0].precio = req.body.precio; }
+        if (req.body.imgUrl != "") { disco[0].imgUrl = req.body.imgUrl; }
+        disco[0].save(function (err) {
+            if (err) throw err;
+            console.log("Actualización correcta");
+            // mongoose.disconnect();
+        });
 
+    });
 
-function saveSesionStart(req) {
-    req.session.id_usuario = "";
-    req.session.nombre = "";
-    req.session.apellidos = "";
-    req.session.email = "";
-    req.session.dni = "";
-    req.session.telefono = "";
-    req.session.direccion = "";
-    req.session.cp = "";
-    req.session.poblacion = "";
-    req.session.carrito = [];
-    req.session.precioCompra = 0;
-    req.session.admin = false;
-    req.session.save();
+}
+async function borrarDisco(req) {
+    const info_vinilo = await Producto.find({ titulo: req.body.nombreSelect });
+    if (info_vinilo[0] === undefined) {
+        console.log(`no existe `);
+    } else {
+        info_vinilo[0].remove(function (err) {
+            if (err) throw err;
+            console.log(`Borrado correcto`);
+        });
+    }
+}
+// addDisco:  titulo autor genero ano  numDIsco precio imgUrl
+function insertarDisco(req) {
+
+    const disco = {
+        titulo: req.body.titulo,
+        autor: req.body.autor,
+        genero: req.body.genero,
+        ano: req.body.ano,
+        numDisco: req.body.numDisco,
+        precio: req.body.precio,
+        imgUrl: req.body.imgUrl
+    }
+
+    let nuevoDisco = new Producto(disco);
+
+    nuevoDisco.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del disco ${disco.titulo}`);
+        // mongoose.disconnect();
+    });
+    location.reload();
 }
 
-function saveSesion(datosUser, req) {
-    req.session.id_usuario = datosUser.id_usuario;
-    req.session.nombre = datosUser.nombre,
-    req.session.apellidos = datosUser.apellidos,
-    req.session.email = datosUser.email,
-    req.session.dni = datosUser.dni,
-    req.session.telefono = datosUser.telefono,
-    req.session.direccion = datosUser.direccion,
-    req.session.cp = datosUser.cp,
-    req.session.poblacion = datosUser.poblacion,
-    req.session.carrito = [],
-    req.session.precioCompra = 0,
-    req.session.admin = false
-    req.session.save();
+function saveSesionStart() {
+    let userStart = {
+        id_usuario: "",
+        nombre: "",
+        apellidos: "",
+        email: "",
+        dni: "",
+        telefono: "",
+        direccion: "",
+        cp: "",
+        poblacion: "",
+        admin: false
+    }
+    return userStart;
+}
+
+function saveSesion(datosUser) {
+    let user = {
+        id_usuario: datosUser.id_usuario,
+        nombre: datosUser.nombre,
+        apellidos: datosUser.apellidos,
+        email: datosUser.email,
+        dni: datosUser.dni,
+        telefono: datosUser.telefono,
+        direccion: datosUser.direccion,
+        cp: datosUser.cp,
+        poblacion: datosUser.poblacion,
+        admin: datosUser.admin
+    }
+    return user;
 }
 async function busquedaUsuarioDni(dni) {
     dni = dni.replace("-", "");
@@ -319,7 +483,7 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         admin: false
     }
 
-    let nuevoUsuario = new Usuario(usuario)
+    let nuevoUsuario = new Usuario(usuario);
 
     nuevoUsuario.save(function (err) {
         if (err) throw err;

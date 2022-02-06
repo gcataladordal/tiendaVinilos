@@ -13,41 +13,40 @@
 
 
   <main>
-    <div class="container">
-      <button type="button" class="btn btn-secondary">Historial</button>
-      <button type="button" class="btn btn-secondary">Modificar mis datos</button>
+    <div class="container my-5 d-flex justify-content-evenly">
+      <button type="button" class="btn btn-outline-secondary bg-dark">Historial</button>
+      <form method="GET" action="/modificarPerfil">
+      <button type="submit" class="btn btn-outline-secondary bg-dark">Modificar mis datos</button>
+      </form>
     </div>
+    <div class="container d-flex justify-content-center">
+      <h4 class="display-6">Sugerencias para ti</h4>
+    </div>
+    <div class="container my-4">
+      <div class="row justify-content-around">
+        <% for(let i=0 ; i < 4 ; i++) { %>
+          <div class="col-lg mt-3">
+            <div class="card" style="width: 18rem;">
+              <form action="/verProducto" method="POST">
+                <input type="image" class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> " alt="Submit Form">
+                <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
 
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-          aria-current="true" aria-label="Sugerencia 1"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-          aria-label="Sugerencia 2"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-          aria-label="Sugerencia 3"></button>
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= infoVinilos[i].titulo %>
+                  </h5>
+                  <p class="card-text">
+                    <%= infoVinilos[i].autor %>
+                      <br>
+                      <%= infoVinilos[i].precio %>
+                  </p>
+                  <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
+                </div>
+              </form>
+            </div>
+          </div>
+          <% } %>
       </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="..." class="d-block w-100" alt="...">
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-        data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-        data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
     </div>
   </main>
 
@@ -57,4 +56,17 @@
 
 </body>
 
+<script>
+  function addProducto(id_vinilo) {
+      var productos = [];
+      if (localStorage.getItem("idProducto") === null) {
+          localStorage.setItem("idProducto", id_vinilo)
+      } else {
+          productos.push(localStorage.getItem("idProducto"));
+          productos.push(id_vinilo);
+          localStorage.setItem("idProducto", productos);
+      }
+  }
+
+</script>
 </html>

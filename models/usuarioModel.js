@@ -13,7 +13,6 @@ const objetoUsuarioSchema = {
     direccion: String,
     cp: String,
     poblacion: String,
-    compras: Array,
     admin: Boolean
 };
 

@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('../partials/head'); %>
+        <script>
+            let name = ('<%-info%>');
+            // console.log(name);
+            localStorage.setItem("user", name);
+        </script>
 </head>
+
 <body>
 
-<header>
-    <%- include('../partials/header'); %>
-</header>
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
 
 
-<main>
+    <main>
         <!-- ! FORMULARIO PARA AÑADIR, BORRAR E INSERTAR SCRAPPEO DEL ADMIN -->
 
         <div class="container">
@@ -21,17 +28,13 @@
         <div class="container mt-3" id="div-register">
             <div class="row justify-content-evenly">
 
+                <!-- /addDisco:  titulo autor genero ano  numDIsco precio imgUrl-->
+
                 <!--! ***INSERTAR VINILOS ****-->
                 <div class="col-4 ">
-                    <form action="/admin" method="POST" id="fmAdminInsert">
+                    <form action="/addDisco" method="POST" id="fmAdminInsert">
                         <h5>Insertar vinilo</h5>
 
-                        <!--! *** ISBN ***-->
-                        <div class="input-group input-group-sm mb-2">
-                            <label for="isbn" class="input-group-text">ISBN</label>
-                            <input type="number" class="form-control" placeholder="" name="isbn" id="isbn" required><br>
-                        </div>
-                        <span></span>
                         <!-- ! *** TÍTULO ***-->
 
                         <div class="input-group input-group-sm mb-2">
@@ -51,41 +54,42 @@
 
                         <div class="input-group input-group-sm mb-2">
                             <label for="genero" class="input-group-text">Género</label>
-                            <input type="text" class="form-control" placeholder="" name="password" id="genero"
+                            <input type="text" class="form-control" placeholder="" name="genero" id="genero"
                                 required><br>
                         </div>
                         <span></span>
                         <!--! *** AÑO ***-->
 
                         <div class="input-group input-group-sm mb-2">
-                            <label for="anio" class="input-group-text">Año</label>
-                            <input type="number" class="form-control" placeholder="" name="anio" id="anio" required><br>
+                            <label for="ano" class="input-group-text">Año</label>
+                            <input type="text" class="form-control" placeholder="" name="ano" id="ano" required><br>
                         </div>
                         <span></span> <span></span>
                         <!--! *** NÚMERO ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
-                            <label for="numero" class="input-group-text">Número</label>
-                            <input type="number" class="form-control" placeholder="" name="numero" id="numero"
-                                aria-describedby="numero" required>
+                            <label for="numDisco" class="input-group-text">Número</label>
+                            <input type="number" class="form-control" placeholder="" name="numDisco" id="numDisco"
+                                aria-describedby="numDisco" required>
                         </div>
                         <span></span>
 
-                        <!--! *** DISCOS ***-->
-
-                        <div class="input-group input-group-sm mb-2 ">
-                            <label for="discos" class="input-group-text">Discos</label>
-                            <input type="text" class="form-control" placeholder="" name="discos" id="discos"
-                                aria-describedby="discos" required>
-                        </div>
-                        <span></span>
 
                         <!--! *** PRECIO ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
                             <label for="precio" class="input-group-text">Precio</label>
-                            <input type="text" class="form-control" placeholder="" name="precio" id="precio"
+                            <input type="number" class="form-control" placeholder="" name="precio" id="precio"
                                 aria-describedby="precio" required>
+                        </div>
+                        <span></span>
+
+                        <!--! *** IMG URL ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="imgUrl" class="input-group-text">ImgUrl</label>
+                            <input type="text" class="form-control" placeholder="" name="imgUrl" id="imgUrl"
+                                aria-describedby="imgUrl" required>
                         </div>
                         <span></span>
 
@@ -101,81 +105,96 @@
                 <!--! ***MODIFICAR VINILOS ****-->
 
                 <div class="col-4 ">
-                    <form action="/admin" method="POST" id="fmAdminMdf">
+                    <form action="/updateDisco" method="POST" id="fmAdminMdf">
                         <h5>Modificar vinilo</h5>
 
-                        <!--! *** ISBN ***-->
+
+                        <!-- ! *** SELECCIONA TITULO DISCO MODIFICAR ***-->
+
+                        <input type="hidden" class="form-control" placeholder="" name="nombreSelect" value=""
+                            id="mdfselect">
                         <div class="input-group input-group-sm mb-2">
-                            <label for="mdfIsbn" class="input-group-text">ISBN</label>
-                            <input type="number" class="form-control" placeholder="" name="mdfIsbn" id="mdfIsbn"
-                                required><br>
+                            <input type="hidden" name="id_vinilo" value="<%= infoDisco %>" id="infoTodo"><br>
+                            <select class="form-control" id="selection">
+
+                                <% for(let i=0 ; i < infoDisco.length ; i++) { %>
+                                    <option>
+                                        <%=infoDisco[i].titulo%>
+                                    </option>
+                                    <% } %>
+                            </select>
+                            <script>
+
+                                const element = document.getElementById("selection");
+                                element.addEventListener("blur", recogertitulo);
+
+                                function recogertitulo() {
+                                    var category = document.getElementById("selection").options[document.getElementById("selection").selectedIndex].value;
+                                    document.getElementById("mdfselect").value = category;
+                                    console.log(category);
+                                    let todoDisco = document.getElementById("infoTodo").value;
+                                }
+                            </script>
                         </div>
                         <span></span>
                         <!-- ! *** TÍTULO ***-->
 
                         <div class="input-group input-group-sm mb-2">
-                            <label for="mdfTitulo" class="input-group-text">Título</label>
-                            <input type="text" class="form-control" placeholder="" name="mdfTitulo" id="mdfTitulo"
-                                required><br>
+                            <label for="titulo" class="input-group-text">Título</label>
+                            <input type="text" class="form-control" placeholder="" name="titulo" id="mdfTitulo"><br>
                         </div>
                         <span></span>
                         <!--! *** AUTOR ***-->
 
                         <div class="input-group input-group-sm mb-2">
-                            <label for="mdfAutor" class="input-group-text">Autor</label>
-                            <input type="text" class="form-control" placeholder="" name="mdfAutor" id="mdfAutor"
-                                required><br>
+                            <label for="autor" class="input-group-text">Autor</label>
+                            <input type="text" class="form-control" placeholder="" name="autor" id="mdfAutor"><br>
                         </div>
                         <span></span>
                         <!--! *** GÉNERO***-->
 
                         <div class="input-group input-group-sm mb-2">
-                            <label for="mdfGenero" class="input-group-text">Género</label>
-                            <input type="text" class="form-control" placeholder="" name="mdfGenero" id="mdfgenero"
-                                required><br>
+                            <label for="genero" class="input-group-text">Género</label>
+                            <input type="text" class="form-control" placeholder="" name="genero" id="mdfGenero"><br>
                         </div>
                         <span></span>
                         <!--! *** AÑO ***-->
 
                         <div class="input-group input-group-sm mb-2">
-                            <label for="mdfAnio" class="input-group-text">Año</label>
-                            <input type="number" class="form-control" placeholder="" name="mdfAnio" id="mdfAnio"
-                                required><br>
+                            <label for="ano" class="input-group-text">Año</label>
+                            <input type="text" class="form-control" placeholder="" name="ano" id="mdfAnio"><br>
                         </div>
                         <span></span> <span></span>
                         <!--! *** NÚMERO ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
-                            <label for="mdfNumero" class="input-group-text">Número</label>
-                            <input type="number" class="form-control" placeholder="" name="mdfNumero" id="mdfNumero"
-                                aria-describedby="numero" required>
+                            <label for="numDisco" class="input-group-text">Número</label>
+                            <input type="text" class="form-control" placeholder="" name="numDisco" id="mdfnumDisco">
                         </div>
                         <span></span>
 
-                        <!--! *** DISCOS ***-->
-
-                        <div class="input-group input-group-sm mb-2 ">
-                            <label for="mdfDiscos" class="input-group-text">Discos</label>
-                            <input type="text" class="form-control" placeholder="" name="mdfDiscos" id="mdfDiscos"
-                                aria-describedby="mdfDiscos" required>
-                        </div>
-                        <span></span>
 
                         <!--! *** PRECIO ***-->
 
                         <div class="input-group input-group-sm mb-2 ">
-                            <label for="mdfPrecio" class="input-group-text">Precio</label>
-                            <input type="text" class="form-control" placeholder="" name="mdfPrecio" id="mdfPrecio"
-                                aria-describedby="mdfPrecio" required>
+                            <label for="precio" class="input-group-text">Precio</label>
+                            <input type="number" class="form-control" placeholder="" name="precio" id="mdfPrecio"
+                                aria-describedby="precio">
                         </div>
                         <span></span>
 
-                        <!-- BOTÓN MODIFICAR -->
+                        <!--! *** IMG URL ***-->
+
+                        <div class="input-group input-group-sm mb-2 ">
+                            <label for="imgUrl" class="input-group-text">ImgUrl</label>
+                            <input type="text" class="form-control" placeholder="" name="imgUrl" id="mdfImgUrl"
+                                aria-describedby="imgUrl">
+                        </div>
+                        <span></span>
+
+                        <!--! BOTÓN MODIFICAR -->
                         <div class="mb-2">
-                            <button class="btn btn-outline-secondary bg-dark" type="submit"
-                                id="btInsertarVinilo">Modificar
-                                un
-                                vinilo</button>
+                            <button class="btn btn-outline-secondary bg-dark" type="submit" id="btInsertarVinilo">Modificar un vinilo</button>
                         </div>
                     </form>
                 </div>
@@ -183,15 +202,34 @@
 
                 <!--! BORRAR -->
                 <div class="col-4 ">
-                    <form action="/admin" method="POST" id="fmAdminBorrar">
+                    <form action="/deleteDisco" method="POST" id="fmAdminBorrar">
 
                         <h5>Borrar vinilo</h5>
-                        <!--! *** ISBN BORRAR ***-->
-
+                        <!--! *** POR NOMBRE BORRAR ***-->
                         <div class="input-group input-group-sm mb-2">
-                            <label for="borrar" class="input-group-text">ISBN</label>
-                            <input type="number" class="form-control" placeholder="" name="borrar" id="borrar"
-                                required><br>
+                            <input type="hidden" class="form-control" placeholder="" name="nombreSelect" value=""
+                                id="deteleSelect"><br>
+                           
+                            <select class="form-control" id="selection2">
+
+                                <% for(let i=0 ; i < infoDisco.length ; i++) { %>
+                                    <option>
+                                        <%=infoDisco[i].titulo%>
+                                    </option>
+                                    <% } %>
+                            </select>
+                            <script>
+
+                                const element2 = document.getElementById("selection2");
+                                element2.addEventListener("blur", recogertitulo);
+
+                                function recogertitulo() {
+                                    var category2 = document.getElementById("selection2").options[document.getElementById("selection2").selectedIndex].value;
+                                    document.getElementById("deteleSelect").value = category2;
+                                    console.log(category2);
+                                    let todoDisco2 = document.getElementById("infoTodo").value;
+                                }
+                            </script>
                         </div>
                         <span></span>
 
@@ -213,33 +251,40 @@
                         <h7>¿Cuántos quieres insertar?</h7>
                         <!--! *** ISBN BORRAR ***-->
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                value="option1">
                             <label class="form-check-label" for="inlineRadio1">1</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                value="option2">
                             <label class="form-check-label" for="inlineRadio2">2</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                                value="option3">
                             <label class="form-check-label" for="inlineRadio3">3</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4"
+                                value="option4">
                             <label class="form-check-label" for="inlineRadio4">4</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5"
+                                value="option5">
                             <label class="form-check-label" for="inlineRadio1">5</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio10" value="option10">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio10"
+                                value="option10">
                             <label class="form-check-label" for="inlineRadio2">10</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio15" value="option15">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio15"
+                                value="option15">
                             <label class="form-check-label" for="inlineRadio2">15</label>
-                          </div>
+                        </div>
                         <!-- botón insertar scrappeo -->
                         <div class="mb-2">
                             <input class="btn btn-outline-secondary bg-dark" type="submit" id="btScrappeoVinilo"
@@ -249,12 +294,13 @@
                 </div>
             </div>
         </div>
-</main>
+    </main>
 
 
-<footer>
-    <%- include('../partials/footer'); %>
-</footer>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
 
 </body>
+
 </html>
