@@ -1,5 +1,5 @@
-
 <!-- cambia de color todo el fondo desde el html -->
+
 <body style="background-color: #EDE7E4 ; ">
 </body>
 
@@ -9,7 +9,8 @@
 <div class="container-fluid">
     <div id="banner">
         <a href="/home" title="Pincha para ir al inicio">
-            <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/banners/990-170.png" class="rounded mx-auto d-block" class="img-fluid" alt="...">
+            <img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/banners/990-170.png"
+                class="rounded mx-auto d-block" class="img-fluid" alt="...">
         </a>
     </div>
 </div>
@@ -24,18 +25,26 @@
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
         <div class="collapse navbar-collapse justify-content-center " id="navbarNavAltMarkup">
             <div class="navbar-nav align-items-center">
+            <a class="nav-link link-info" id="nombreSession"></a>
+
+                <form id="formVolverAdmin" method="POST" action="/volverAdmin">
+                    <input type="hidden" name="infoAdmin" id="infoAdmin" value="">
+                    <a href="#" class="nav-link link-info" id="nombreAdmin" onclick=infoAdmin() type="submit">ADMIN</a>
+                </form>
                 <a class="nav-link link-info" aria-current="page" href="/tienda"><h4>Tienda</h4></a>
-                <a class="nav-link link-info" href="/registerLogin"><h4>Register / Login</h4></a>
-                <a class="nav-link link-info" href="/buscarHist"><h4>Ver mi historial</h4></a>
+                <a class="nav-link link-info" id="registerLogin" href="/registerLogin"><h4>Register / Login</h4></a>
+                <a class="nav-link link-info" id="miHistorial" href="/buscarHist"><h4>Ver mi historial</h4></a>
                 <a class="nav-link link-info" id="miPerfil" href="/perfil"><h4>Mi Perfil</h4></a>
                 <a class="nav-link link-info" id="logout" href="/logout"><h4>Logout</h4></a>
                 <form id="formCarrito" method="POST" action="/verCarrito">
                     <input type="hidden" name="carritoData" id="inputCarrito" value="">
                     <a href="#" class="nav-link link-info pt-1" onclick=recuperarCarrito() id="carrito" type="submit"><img src="https://raw.githubusercontent.com/lyvegama/imagenesVinilos/main/disenio/otras/carrito.png" width="50" height="50"></a>
+
                 </form>
-                
+
             </div>
         </div>
     </div>
@@ -81,13 +90,47 @@
         </button>
     </div>
 </div>
-
 <script>
-    function recuperarCarrito(){
-        var carritoRecuperado = localStorage.getItem("idProducto");
+    let datoUser = JSON.parse(localStorage.getItem('user'));
+    //No logueado -> se esconde el Logout
+    if (datoUser.nombre == "") {
+        document.getElementById("logout").style.display = 'none';
+        document.getElementById("miPerfil").style.display = 'none';
+        document.getElementById("nombreAdmin").style.display = 'none';
+
+        //Se loguean -> aparece logout, nombre
+
+    } else {
+        // Si LOGUEAS y no eres ADMIN
+        if (!datoUser.admin) {
+            document.getElementById("nombreSession").innerText = datoUser.nombre;
+            document.getElementById("registerLogin").style.display = 'none';
+            document.getElementById("nombreAdmin").style.display = 'none';
+            document.getElementById("logout").style.display = 'block';
+        } else {
+            //VISION DEL NAV ADMIN
+            // document.getElementById("nombreSession").href="/admin";
+            document.getElementById("registerLogin").style.display = 'none';
+            document.getElementById("miHistorial").style.display = 'none';
+            document.getElementById("inputCarrito").style.display = 'none';
+            document.getElementById("miPerfil").style.display = 'none';
+            document.getElementById("carrito").style.display = 'none';
+        }
+    }
+    function infoAdmin() {
+        var infoAdmin = localStorage.getItem("user");
+        // console.log(JSON.parse(infoAdmin)); --> correcto
+        document.getElementById("infoAdmin").value = infoAdmin;
+        document.getElementById("formVolverAdmin").submit();
+
+    }
+</script>
+<script>
+    function recuperarCarrito() {
+        var carritoRecuperado = localStorage.getItem("user");
         document.getElementById("inputCarrito").value = carritoRecuperado;
         document.getElementById("formCarrito").submit();
     }
-    
+
     
 </script>

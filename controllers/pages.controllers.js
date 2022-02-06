@@ -17,13 +17,25 @@ const pages = {
     addDisco: (req, res) => {
         insertarDisco(req);
     },
+
+    deleteDisco: (req, res) => {
+        borrarDisco(req);
+    },
+
+    updateDisco: (req, res) => {
+        modificarDisco(req);
+    },
+
     home: (req, res) => {
         let infoUser = saveSesionStart();
+        let estado = "inicio";
         res.render("pages/home", { info: JSON.stringify(infoUser) });
     },
+
     verHome: (req, res) => {
         res.render("pages/home2");
     },
+
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
@@ -40,15 +52,17 @@ const pages = {
         console.log(req.body.titulo)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
       },
+
     verPerfil: async (req, res) => {
-        let infoDiscos = await obtenerInfoVinilos(); 
+        let infoDiscos = await obtenerInfoVinilos();
         res.render("pages/perfil", { infoVinilos: infoDiscos });
     },
+
     verProducto: async (req, res) => {
         let infoDisco = await obtenerInfoProducto(req);
         res.render("pages/producto", {infoProducto: infoDisco});
     },
-  
+
     buscarHist: (req, res) => {
         res.render("pages/buscarHist");
     },
@@ -61,9 +75,13 @@ const pages = {
             res.render("pages/carrito", { infoProductos: arrayProductos });
         }
     },
-  
-    verAdmin: (req, res) => {
-        res.render("pages/admin");
+
+
+    //Al pinchar en el nav para volver
+    volverAdmin: async (req, res) => {
+        let infoUser = req.body.infoAdmin;
+        let infoDiscos = await obtenerInfoVinilos();
+        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos });
     },
     carritoConfirmado: async (req, res) => {
         let userInfo = JSON.parse(req.body.userInfo);
@@ -76,6 +94,12 @@ const pages = {
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
             res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
         }
+
+
+    viewRegister: (req, res) => {
+        let estado = "inicio";
+        res.render("pages/registerLogin");
+        // res.render("pages/registerLogin", { validation: estado });
 
     },
     verFactura: (req, res) => {
@@ -135,6 +159,7 @@ const pages = {
     login: (req, res) => {
         loguear(req, res);
     },
+
     logout: (req, res) => {
         let infoUser = saveSesionStart();
         res.render("pages/home", { info: JSON.stringify(infoUser) });
@@ -167,7 +192,7 @@ async function insertarCompra(idsVinilos, userInfo){
 }
 
 async function obtenerInfoVinilos() {
-    var infoVinilo = await Producto.find({})
+    var infoVinilo = await Producto.find({});
     return infoVinilo;
 }
 
@@ -195,6 +220,7 @@ async function obtenerViniloTitulo(titulo) {
 
 async function obtenerProductosCarrito(ids) {
     let arrayIds = ids.split(",");
+
     if (arrayIds[0] !== "") {
         let arrayProductos = [];
         let precioTotal = 0;
@@ -209,6 +235,7 @@ async function obtenerProductosCarrito(ids) {
         let carritoSinProductos = "No has añadido nada al carrito";
         return carritoSinProductos;
     }
+
 }
 
 
@@ -237,14 +264,14 @@ async function registrar(req, res) {
     //// const direccionOk = regExpName.test(direccion); NO pasa por validacion
     const cpOk = regExpCp.test(cp);
     const tlfOk = regExpTlf.test(tlf);
-    console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
+    // console.log(`nombre: ${nombreOk} \n apellido: ${apellidosOk} \n email ${emailOk} \n pass:${passOk} \n pass2:${pass2Ok} \n mismopass: ${mismoPassOk} \n dni :${dniOk} \n dp :${cpOk} \n tlf: ${tlfOk}`);
 
     var ok = nombreOk && apellidosOk && emailOk && passOk && pass2Ok && mismoPassOk && dniOk && cpOk && tlfOk;
     // var ok = nombreOk && apellidosOk && emailOk && dniOk && cpOk && tlfOk;
 
     // console.log(ok);
 
-    var ok = true;  // Para hacerlo sin validaciones
+    // var ok = true;  // Para hacerlo sin validaciones
     // 47919013P
 
     // //! ---- SI TODAS VALIDACIONES TRUE --------
@@ -252,16 +279,15 @@ async function registrar(req, res) {
         console.log("Entra");
         const existeDni = await busquedaUsuarioDni(dni);
         //devuleve {} del usuario de la base de datos, sino es null
-        // console.log("*******************");
 
-        // console.log(existeDni);
         if ((existeDni) == null) {
             console.log("se registra");
             var passEnc = "";
             passEnc = await bcrypt.hash(password, saltRounds);
             console.log(passEnc);
             insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
-
+            let estado = "correcto";
+            // res.render("pages/registerLogin", { validation: estado });
         } else {
             console.log("existe usuario");
         }
@@ -275,6 +301,8 @@ async function registrar(req, res) {
         if (!dniOk) { console.log(" dni no valido"); }
         if (!cpOk) { console.log(" cp no valido"); }
         if (!tlfOk) { console.log(" tlf no valido"); }
+        let estado = "incorrecto";
+        // res.render("pages/registerLogin", { validation: estado });
     }
 }
 
@@ -310,20 +338,17 @@ async function loguear(req, res) {
         if ((existeEmail[0]) == undefined) {
             console.log("Registrate");
         } else {
-            // console.log("Eres TU y tu pass del bd es"+ existeEmail[0].pass);
-            // console.log("pass? " + existeEmail[0].pass);
+
             var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
             if (mismoPass) {
                 //ExisteEmail[0] = { Toda la info del usuario }
                 if (existeEmail[0].admin) {
                     console.log("Hola ADMIN!!");
-                    console.log(existeEmail[0].id_usuario);
-
                     let infoUser = saveSesion(existeEmail[0]);
-                    res.render("pages/admin", { info: JSON.stringify(infoUser) });
+                    let infoDiscos = await obtenerInfoVinilos();
+                    // console.log(`Recoge la info de vinilos al ir a admin: ${infoDiscos}`);
+                    res.render("pages/admin", { info: JSON.stringify(infoUser), infoDisco: infoDiscos });
                 } else {
-
-                    console.log(existeEmail[0].id_usuario);
                     let infoUser = saveSesion(existeEmail[0]);
                     res.render("pages/home", { info: JSON.stringify(infoUser) });
                 }
@@ -336,7 +361,38 @@ async function loguear(req, res) {
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
     }
 }
+async function modificarDisco(req) {
+    //Recoge la info del disco a modificar
+    Producto.find({ titulo: req.body.nombreSelect }, function (err, disco) {
+        if (err) throw err;
+        console.log(disco[0]);
+        if (req.body.titulo != "") { disco[0].titulo = req.body.titulo; }
+        if (req.body.autor != "") { disco[0].autor = req.body.autor; }
+        if (req.body.genero != "") { disco[0].genero = req.body.genero; }
+        if (req.body.ano != "") { disco[0].ano = req.body.ano; }
+        if (req.body.numDisco != "") { disco[0].numDisco = req.body.numDisco; }
+        if (req.body.precio != "") { disco[0].precio = req.body.precio; }
+        if (req.body.imgUrl != "") { disco[0].imgUrl = req.body.imgUrl; }
+        disco[0].save(function (err) {
+            if (err) throw err;
+            console.log("Actualización correcta");
+            // mongoose.disconnect();
+        });
 
+    });
+
+}
+async function borrarDisco(req) {
+    const info_vinilo = await Producto.find({ titulo: req.body.nombreSelect });
+    if (info_vinilo[0] === undefined) {
+        console.log(`no existe `);
+    } else {
+        info_vinilo[0].remove(function (err) {
+            if (err) throw err;
+            console.log(`Borrado correcto`);
+        });
+    }
+}
 // addDisco:  titulo autor genero ano  numDIsco precio imgUrl
 function insertarDisco(req) {
 
@@ -357,9 +413,7 @@ function insertarDisco(req) {
         console.log(`Inserción correcta del disco ${disco.titulo}`);
         // mongoose.disconnect();
     });
-   
-
-
+    location.reload();
 }
 
 function saveSesionStart() {
