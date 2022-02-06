@@ -24,32 +24,31 @@ router.get("/buscarHist",pages.buscarHist);
 // router.post("/historial", pages.historial);
 
 // // Viene de Mi Perfil para modificar datos
-//* router.get("/modDatos", pages.modDatos);
-
-
+// router.get("/modDatos", pages.modDatos);
 
 // router.get("/insertarProducto", pages.insertarProducto)
 
 router.get("/insertarCompra", pages.insertarCompra)
-
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
 
 router.get("/logout", pages.logout);
 
-
-router.post("/verCarrito", pages.verCarrito)
-
+router.post("/verCarrito", pages.verCarrito);
 router.post("/registro", pages.registro);
 router.post("/login", pages.login);
 // // Viene de un botón de perfil
 router.get("/perfil", pages.verPerfil);
 
 //Direcciona a la pg de admin
-router.get("/admin", pages.verAdmin);
+
+//Para volver desde el nav a la vision de admin
+router.post("/volverAdmin", pages.volverAdmin);
 //Inserta disco
 router.post("/addDisco", pages.addDisco);
+router.post("/deleteDisco", pages.deleteDisco);
+router.post("/updateDisco", pages.updateDisco);
 // // Viene de un botón del producto y te lleva a la info de ese producto
 router.post("/verProducto", pages.verProducto);
 
