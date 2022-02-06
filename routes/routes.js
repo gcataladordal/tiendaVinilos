@@ -28,14 +28,22 @@ router.get("/buscarHist",pages.buscarHist);
 
 // router.get("/insertarProducto", pages.insertarProducto)
 
+
+
 router.get("/insertarCompra", pages.insertarCompra)
+router.post("/verBusqueda", pages.verBusqueda )
+router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)
+
 
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
 
 router.get("/logout", pages.logout);
 
-router.post("/verCarrito", pages.verCarrito);
+router.post("/verFactura", pages.verFactura)
+router.post("/carritoConfirmado", pages.carritoConfirmado)
+router.post("/verCarrito", pages.verCarrito)
+
 router.post("/registro", pages.registro);
 router.post("/login", pages.login);
 // // Viene de un botón de perfil
