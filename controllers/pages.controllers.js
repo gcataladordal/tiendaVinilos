@@ -48,8 +48,6 @@ const pages = {
     },
     verBusquedaTitulo: async (req, res) => {
         let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
-        console.log("Pasamos busqueda")
-        console.log(req.body.tituloIntroducido)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
       },
       modificarPerfil: (req, res) => {
@@ -57,7 +55,7 @@ const pages = {
     },
 
     verPerfil: async (req, res) => {
-        let infoDiscos = await obtenerInfoVinilos();
+        let infoDiscos = await obtenerInfoVinilosRandom();
         res.render("pages/perfil", { infoVinilos: infoDiscos });
     },
 
@@ -197,6 +195,23 @@ async function insertarCompra(idsVinilos, userInfo){
 async function obtenerInfoVinilos() {
     var infoVinilo = await Producto.find({});
     return infoVinilo;
+}
+
+async function obtenerInfoVinilosRandom() {
+    var infoRVinilo = await Producto.find({})
+    var randomVinil = []
+     function getRandom() {
+            return Math.floor(Math.random() * infoRVinilo.length)
+        }
+        // checkeando por no repetidos
+        function checkNotRepeat(current, validNumbers) {
+            return validNumbers.includes(current)
+        }
+        while (randomVinil.length < 6) {
+            const randomIndex = getRandom()
+            if (!checkNotRepeat(infoRVinilo[randomIndex], randomVinil))
+                randomVinil.push(infoRVinilo[randomIndex])}
+            return randomVinil
 }
 
 async function obtenerInfoProducto(req) {

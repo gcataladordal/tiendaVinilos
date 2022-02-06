@@ -26,6 +26,12 @@
     </header>
 
     <main>
+        <% if (infoVinilos2[0] == undefined) { %>
+            <div class="container mt-5">
+                <h2>El disco que busca no existe o no está disponible</h2>
+            </div>
+            <% } %>
+        <% if (infoVinilos2[0] != undefined) { %>
         <div class="container mt-5">
             <div class="row justify-content-around">
                 <div class="col-lg mt-3">
@@ -56,6 +62,7 @@
 
             </div>
         </div>
+        <% } %>
     </main>
     <footer>
         <%- include('../partials/footer'); %>
