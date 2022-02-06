@@ -66,7 +66,7 @@ const pages = {
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
-            res.render("pages/buyConfirm", { infoCompra: insertarEnCompras });
+            res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
         }
 
     },
