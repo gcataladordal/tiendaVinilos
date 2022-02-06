@@ -71,8 +71,8 @@ const pages = {
 
     },
     verFactura: (req, res) => {
-        console.log(req.body.infoUser)
-        console.log(req.body.infoProductos)
+        console.log(req.body.infoUser);
+        console.log(req.body.infoProductos);
         res.render("pages/factura")
         // let infoComprador = JSON.parse(req.body.infoUser)
         // let infoProductos = JSON.parse(req.body.infoProductos)
