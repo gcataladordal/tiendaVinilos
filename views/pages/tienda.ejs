@@ -3,55 +3,114 @@
 
 <head>
     <%- include('../partials/head'); %>
-    <script>
-        function addProducto(id_vinilo) {
-            var productos = [];
-            if (localStorage.getItem("idProducto") == "") {
-                localStorage.setItem("idProducto", id_vinilo)
-            } else {
-                console.log(id_vinilo)
-                productos.push(localStorage.getItem("idProducto"));
-                productos.push(id_vinilo);
-                localStorage.setItem("idProducto", productos );
+        <script>
+            function addProducto(id_vinilo) {
+                var productos = [];
+                if (localStorage.getItem("idProducto") == "") {
+                    localStorage.setItem("idProducto", id_vinilo)
+                } else {
+                    console.log(id_vinilo)
+                    productos.push(localStorage.getItem("idProducto"));
+                    productos.push(id_vinilo);
+                    localStorage.setItem("idProducto", productos);
+                }
             }
-        }
+            async function botonBusqueda() {
+                let generosCheckados = await comprobarCheck();
+                document.getElementById("inputHidden").value = generosCheckados
+                document.getElementById("formBusqueda").submit()
+            }
 
-   </script>
+            function comprobarCheck() {
+                var todosCheck = document.getElementsByClassName("form-check-input")
+                var generosCheckados = []
+                for (let i = 0; i < todosCheck.length; i++) {
+                    if (todosCheck[i].checked) { generosCheckados.push(todosCheck[i].value) }
+                }
+                console.log(generosCheckados)
+                return generosCheckados
+            }
+            async function botonTitulo() {
+                let titulo = await comprobarTitulo()
+                document.getElementById("inputHidden2").value = titulo
+                console.log("El valor del hidden")
+                consol.log(getElementById("inputHidden2").value)
+                document.getElementById("formBusqueda2").submit()
+            }
+            function comprobarTitulo() {
+                var inputTitulo = document.getElementById("tituloBusqueda").value;
+                return inputTitulo
+            }
+
+        </script>
 </head>
 
 <body>
-    
+
     <header>
         <%- include('../partials/header'); %>
     </header>
 
     <main>
         <div class="container">
-            <form class="d-flex align-items-end">
-                <input class="form-control me-2" type="search" placeholder="¿Qué buscas?" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            <form action="/verBusquedaTitulo" id="formBusqueda2" method="POST" class="d-flex align-items-end">
+                <div>
+                    <div>
+                        <input class="form-control me-2" type="search" id="tituloBusqueda"
+                            placeholder="Buscar por título" aria-label="Search">
+                        <input type="hidden" class="form-control" name="tituloIntroducido" value="" id="inputHidden2">
+                        <button class="btn btn-outline-success" onclick="botonTitulo()" type="submit">Buscar</button>
+                    </div>
+                </div>
             </form>
+                <form action="/verBusqueda" id="formBusqueda" method="POST" class="d-flex align-items-end">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Rock">
+                        <label class="form-check-label" for="inlineCheckbox1">Rock</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Jazz">
+                        <label class="form-check-label" for="inlineCheckbox2">Jazz</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Hip Hop">
+                        <label class="form-check-label" for="inlineCheckbox3">Hip Hop</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Blues">
+                        <label class="form-check-label" for="inlineCheckbox3">Blues</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Funk">
+                        <label class="form-check-label" for="inlineCheckbox3">Funk</label>
+                    </div>
+                    <input type="hidden" class="form-control" name="generosCheckados" value="" id="inputHidden">
+                    <button class="btn btn-outline-success" onclick="botonBusqueda()" type="submit">Buscar</button>
         </div>
-        
+        </form>
+        </div>
+
         <div class="container mt-5">
             <div class="row justify-content-around">
                 <% for(let i=0 ; i < infoVinilos.length ; i++) { %>
                     <div class="col-lg mt-3">
                         <div class="card" style="width: 18rem;">
                             <form action="/verProducto" method="POST">
-                                <input type="image"  class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> " alt="Submit Form">
-                            <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
-                            
+                                <input type="image" class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> "
+                                    alt="Submit Form">
+                                <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
+
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoVinilos[i].titulo %>
                                     </h5>
                                     <p class="card-text">
                                         <%= infoVinilos[i].autor %>
-                                        <br>
-                                        <%= infoVinilos[i].precio %>
+                                            <br>
+                                            <%= infoVinilos[i].precio %>
                                     </p>
-                                    <a href="#" class="btn btn-dark" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al carrito</a>
+                                    <a href="#" class="btn btn-dark"
+                                        onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">Añadir al carrito</a>
                                 </div>
                             </form>
                         </div>
@@ -62,28 +121,30 @@
         <div class="container mt-5">
             <h1>Vinilos scrapeados</h1>
             <div class="row justify-content-around">
-            <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
-                <% if (infoDiscosScrapeados[i] !== undefined){ %>
-                                <div class="col-lg mt-3">
-                                <div class="card" style="width: 18rem;">
-                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+                <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
+                    <% if (infoDiscosScrapeados[i] !==undefined){ %>
+                        <div class="col-lg mt-3">
+                            <div class="card" style="width: 18rem;">
+                                <input type="image" href="#" class="card-img-top"
+                                    src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoDiscosScrapeados[i].titulo %>
                                     </h5>
                                     <p class="card-text">
                                         <%= infoDiscosScrapeados[i].autor %>
-                                        <br>
-                                        <%= infoDiscosScrapeados[i].ano %>
-                                        <br>
-                                        <%= infoDiscosScrapeados[i].precio %>
+                                            <br>
+                                            <%= infoDiscosScrapeados[i].ano %>
+                                                <br>
+                                                <%= infoDiscosScrapeados[i].precio %>
                                     </p>
-                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank” class="btn btn-dark">Ver en la web</a>
+                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank”
+                                        class="btn btn-dark">Ver en la web</a>
                                 </div>
                             </div>
                         </div>
-                                <% } %>
-                    <% } %>
+                        <% } %>
+                            <% } %>
             </div>
         </div>
     </main>

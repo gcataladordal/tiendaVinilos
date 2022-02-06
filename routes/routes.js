@@ -28,8 +28,8 @@ router.get("/carrito", pages.verCarrito);
 // router.get("/insertarProducto", pages.insertarProducto)
 
 router.get("/insertarCompra", pages.insertarCompra)
-
-
+router.post("/verBusqueda", pages.verBusqueda )
+router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)
 // // Viene de un botón al register
 router.get("/registerLogin", pages.viewRegister);
 
