@@ -52,6 +52,9 @@ const pages = {
         console.log(req.body.titulo)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
       },
+      modificarPerfil: (req, res) => {
+      res.render("pages/modDatos")
+    },
 
     verPerfil: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
@@ -95,7 +98,7 @@ const pages = {
             res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
         }
 
-
+    },
     viewRegister: (req, res) => {
         let estado = "inicio";
         res.render("pages/registerLogin");
