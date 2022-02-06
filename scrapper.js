@@ -64,13 +64,13 @@ const addRecordsWeb = async (num) => {
                 randomLinks.push(productUrls[randomIndex])
         }
         console.log("Links aleatorios")
-        console.log(randomLinks)
+        //console.log(randomLinks)
         for (productLink in randomLinks) {
             const productsInfo = await extractData(randomLinks[productLink], browser)
             scrapedData.push(productsInfo);
         }
-        console.log("Data scrapeada");
-        console.log(scrapedData);
+       // console.log("Data scrapeada");
+        // console.log(scrapedData);
         return scrapedData
     }
     catch (error) {

@@ -35,9 +35,9 @@ const pages = {
     res.render("pages/busqueda", {infoVinilos: infoDiscos} )
     },
     verBusquedaTitulo: async (req, res) => {
-        let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
+        let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
         console.log("Pasamos busqueda")
-        console.log(req.body.titulo)
+        console.log(req.body.tituloIntroducido)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
         },
     verPerfil: (req, res) => {
@@ -124,7 +124,9 @@ async function obtenerVinilosGenero(generosCheckados) {
 }
 
 async function obtenerViniloTitulo(titulo) {
-    const viniloTit = await Producto.find({ titulo: titulo });
+    const viniloTit = await Producto.find({ "titulo": titulo });
+    console.log("Esto es la búsqueda")
+    console.log(viniloTit)
     return viniloTit;
 }
 

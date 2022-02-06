@@ -31,10 +31,12 @@
                 return generosCheckados
             }
             async function botonTitulo() {
-                let titulo = await comprobarTitulo()
-                document.getElementById("inputHidden2").value = titulo
-                console.log("El valor del hidden")
-                consol.log(getElementById("inputHidden2").value)
+                var titulo = await comprobarTitulo()
+                console.log("Esta es la función que coge el input")
+                console.log(titulo)
+                var input = document.getElementById("inputHidden2").value = titulo
+                console.log("Esta es la función que pasa el value")
+                console.log(input)
                 document.getElementById("formBusqueda2").submit()
             }
             function comprobarTitulo() {
@@ -56,36 +58,36 @@
             <form action="/verBusquedaTitulo" id="formBusqueda2" method="POST" class="d-flex align-items-end">
                 <div>
                     <div>
-                        <input class="form-control me-2" type="search" id="tituloBusqueda"
+                        <input class="form-control me-2" type="text" id="tituloBusqueda"
                             placeholder="Buscar por título" aria-label="Search">
                         <input type="hidden" class="form-control" name="tituloIntroducido" value="" id="inputHidden2">
                         <button class="btn btn-outline-success" onclick="botonTitulo()" type="submit">Buscar</button>
                     </div>
                 </div>
             </form>
-                <form action="/verBusqueda" id="formBusqueda" method="POST" class="d-flex align-items-end">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Rock">
-                        <label class="form-check-label" for="inlineCheckbox1">Rock</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Jazz">
-                        <label class="form-check-label" for="inlineCheckbox2">Jazz</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Hip Hop">
-                        <label class="form-check-label" for="inlineCheckbox3">Hip Hop</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Blues">
-                        <label class="form-check-label" for="inlineCheckbox3">Blues</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Funk">
-                        <label class="form-check-label" for="inlineCheckbox3">Funk</label>
-                    </div>
-                    <input type="hidden" class="form-control" name="generosCheckados" value="" id="inputHidden">
-                    <button class="btn btn-outline-success" onclick="botonBusqueda()" type="submit">Buscar</button>
+            <form action="/verBusqueda" id="formBusqueda" method="POST" class="d-flex align-items-end">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Rock">
+                    <label class="form-check-label" for="inlineCheckbox1">Rock</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Jazz">
+                    <label class="form-check-label" for="inlineCheckbox2">Jazz</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Hip Hop">
+                    <label class="form-check-label" for="inlineCheckbox3">Hip Hop</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Blues">
+                    <label class="form-check-label" for="inlineCheckbox3">Blues</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Funk">
+                    <label class="form-check-label" for="inlineCheckbox3">Funk</label>
+                </div>
+                <input type="hidden" class="form-control" name="generosCheckados" value="" id="inputHidden">
+                <button class="btn btn-outline-success" onclick="botonBusqueda()" type="submit">Buscar</button>
         </div>
         </form>
         </div>
