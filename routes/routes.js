@@ -25,6 +25,9 @@ router.post("/submitDatosEnvio", pages.submitDatosEnvio);
 
 // // Viene de Mi Perfil para modificar datos
 router.get("/modificarPerfil", pages.modificarPerfil);
+// // donde se genera el post y modifica la información en la BD
+router.post("/updateUser", pages.updateUser )
+
 
 router.post("/pasarela", pages.datosEnvio2)
 

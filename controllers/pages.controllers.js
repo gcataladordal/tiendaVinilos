@@ -49,12 +49,16 @@ const pages = {
     },
 
     verBusquedaTitulo: async (req, res) => {
-
-        let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
+      let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
         res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
       },
-    modificarPerfil: (req, res) => {
+   modificarPerfil: (req, res) => {
         res.render("pages/modDatos")
+    },
+   
+    updateUser: async (req, res) => {
+        let updateUser = await modificarUsuario(req);
+        res.render("pages/modDatos");
     },
 
     //! Comprabar lo hice a ciegas !!!!!
@@ -86,6 +90,7 @@ const pages = {
         console.log(infoCompras);
 
     },
+    
 
     verPerfil: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilosRandom();
@@ -93,6 +98,7 @@ const pages = {
     },
 
     verProducto: async (req, res) => {
+
         let infoDisco = await obtenerInfoProducto(req.body.id_vinilo);
         res.render("pages/producto", {infoProducto: infoDisco});
     },
@@ -128,7 +134,9 @@ const pages = {
         let idsVinilos = req.body.idsCompra;
         if (userInfo.nombre === "") {
             // Usuario NO registrado
+
             res.render("pages/datosEnvio");
+
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
@@ -165,6 +173,7 @@ const pages = {
         res.render("pages/registerLogin", { validation: estado });
 
     },
+
     verFactura: async (req, res) => {
         // console.log(req.body.infoUser);
         let infoComprador = JSON.parse(req.body.infoUser);
@@ -199,6 +208,7 @@ const pages = {
         createInvoice(factura, "./public/factura_vinilosFull.pdf");      
         res.render("pages/factura")
     }
+
     },
 
     registro: (req, res) => {
@@ -469,6 +479,33 @@ async function modificarDisco(req) {
     });
 
 }
+
+async function modificarUsuario(req) {
+    //!! Recoge la info del usuario a modificar; probando con mi user
+    // req.body.data[0].email: recoge el mail del input hidden
+    Usuario.find({ email: "dudeneto@hotmail.com" }, function (err, user) {
+        if (err) throw err;
+        console.log(user[0]);
+        if (req.body.nombre != "") { user[0].nombre = req.body.nombre; }
+        if (req.body.apellidos != "") { user[0].apellidos = req.body.apellidos; }
+        if (req.body.email != "") { user[0].email = req.body.email; }
+        // ?? Password no va encriptado, OJO!
+        if (req.body.password != "") { user[0].password = req.body.password; }
+        if (req.body.dni != "") { user[0].dni = req.body.dni; }
+        if (req.body.telefono != "") { user[0].telefono = req.body.telefono; }
+        if (req.body.direccion != "") { user[0].direccion = req.body.direccion; }
+        if (req.body.cp != "") { user[0].cp = req.body.cp; }
+        if (req.body.poblacion != "") { user[0].poblacion = req.body.poblacion; }
+        user[0].save(function (err) {
+            if (err) throw err;
+            console.log("Modificación correcta");
+            // mongoose.disconnect();
+        });
+
+    });
+
+}
+
 async function borrarDisco(req) {
     const info_vinilo = await Producto.find({ titulo: req.body.nombreSelect });
     if (info_vinilo[0] === undefined) {
