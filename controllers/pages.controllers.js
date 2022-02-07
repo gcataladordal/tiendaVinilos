@@ -91,7 +91,7 @@ const pages = {
         let idsVinilos = req.body.idsCompra;
         if (userInfo.nombre === "") {
             // Usuario NO registrado
-            res.render("pages/datosEnvio", {idsCompra : idsVinilos});
+            res.render("pages/datosEnvio");
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
@@ -99,6 +99,28 @@ const pages = {
             res.render("pages/buyConfirm");
         }
 
+    },
+    submitDatosEnvio: async (req, res) => {
+        
+        const existeDni = await busquedaUsuarioDni(req.body.dni);
+        if ((existeDni) == null) {
+            let usuario = insertarUsuarioDatosEnvio(req.body.nombre, req.body.apellidos, req.body.email, "", req.body.dni, req.body.direccion, req.body.cp, req.body.poblacion, req.body.tlf);
+
+            res.render("pages/pasarela", {info : JSON.stringify(usuario)})
+            
+        } else {
+            console.log("existe usuario");
+        }
+    },
+    datosEnvio2: async (req, res) => {
+        let infoUser = JSON.parse(req.body.datos);
+        let infoProductos = req.body.productos;
+        console.log(infoProductos)
+        let returnInfoUserConId = await busquedaUsuarioDni(infoUser.dni) 
+        let insertarEnCompras = await insertarCompra(infoProductos, returnInfoUserConId);
+        res.render("pages/buyConfirmNoUser", {info : JSON.stringify(returnInfoUserConId)});
+            
+    
     },
     viewRegister: (req, res) => {
         let estado = "inicio";
@@ -111,33 +133,33 @@ const pages = {
         let infoComprador = JSON.parse(req.body.infoUser);
         let idsProductosCompra = req.body.infoProductos;
         let infoProductosFactura = await obtenerInfoProductosFactura(idsProductosCompra)
-        console.log(infoProductosFactura.length)
+
         let productos = [];
         for (let i = 0; i < infoProductosFactura.length - 1; i++) {
             const prod = {
-                producto: infoProductosFactura[i].autor,
-                titulo: infoProductosFactura[i].titulo,
+                producto: infoProductosFactura[i][0].autor,
+                titulo: infoProductosFactura[i][0].titulo,
                 cantidad: 1,
-                precio: infoProductosFactura[i].precio + 100
+                precio: infoProductosFactura[i][0].precio * 100
             }
             productos.push(prod)
         }
-        
+    
         const factura = {
             shipping: {
-              nombre: infoComprador.nombre,
+              nombre: infoComprador.nombre +" "+ infoComprador.apellidos,
               direccion: infoComprador.direccion,
               poblacion: infoComprador.poblacion,
               cp: infoComprador.cp,
               email: infoComprador.email,
             },
             productos: productos,
-            subtotal: infoProductosFactura[infoProductosFactura.length-1],
+            subtotal: infoProductosFactura[infoProductosFactura.length-1] * 100,
             paid: 0,
             invoice_nr: 1
           };
           
-          createInvoice(factura, "factura_vinilosFull.pdf");
+        createInvoice(factura, "./public/factura_vinilosFull.pdf");
           
 
         res.render("pages/factura")
@@ -493,6 +515,31 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         // mongoose.disconnect();
     });
     res.render("pages/registerLogin");
+}
+
+function insertarUsuarioDatosEnvio(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    let usuario = {
+        nombre: nombre,
+        apellidos: apellidos,
+        email: email,
+        pass: pass, 
+        dni: dni,
+        telefono: tlf,
+        direccion: direccion,
+        cp: cp,
+        poblacion: poblacion,
+        admin: false
+    }
+
+    let nuevoUsuario = new Usuario(usuario);
+
+    nuevoUsuario.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del Usuario ${nombre}`);
+    });
+    return usuario
 }
 
 // ******** VALIDACIONES  ************

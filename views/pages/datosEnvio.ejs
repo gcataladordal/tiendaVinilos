@@ -23,7 +23,7 @@
         <div class="container mt-3" id="div-datosEnvio">
             <div class="row justify-content-evenly">
                 <div class="col-4 ">
-                    <form action="/datosEnvio" method="POST" id="fmDatosEnvio" <!--! ***DETALLES DE ENVÍO ****-->
+                    <form action="/submitDatosEnvio" method="POST" id="formDatosEnvio"> <!--! ***DETALLES DE ENVÍO ****-->
 
                         <!--! *** Nombre ***-->
                         <div class="input-group input-group-sm mb-2">
@@ -101,10 +101,10 @@
                             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                         </div>
 
-
+                        <input type="hidden" id="inputProductosHiddenDatosEnvio" name="idsProductos" value="">
 
                         <div class="mb-2">
-                            <button class="btn btn-outline-secondary bg-dark" type="submit" id="btRegister">Pagar y
+                            <button class="btn btn-outline-secondary bg-dark" onclick="submitDatosEnvio()" type="submit" id="btRegister">Pagar y
                                 finalizar</button>
                         </div>
                     </form>
@@ -115,7 +115,13 @@
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
-
+    <script>
+        function submitDatosEnvio() {
+        var idProductos = localStorage.getItem("idProducto")
+        document.getElementById("inputProductosHiddenDatosEnvio").value = idProductos;
+        document.getElementById("formDatosEnvio").submit();
+    }
+    </script>
 </body>
 
 </html>

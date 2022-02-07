@@ -15,12 +15,12 @@ function createInvoice(invoice, path) {
 
 function generateHeader(doc) {
   doc
-    .image("", 50, 45, { width: 50 })
+    
     .fillColor("#444444")
     .fontSize(20)
-    .text("VinilosFull", 110, 57)
+    .text("VinilosFull S.A.", 50, 57)
     .fontSize(10)
-    .text("VinilosFull", 200, 50, { align: "right" })
+    .text("VinilosFull S.A", 200, 50, { align: "right" })
     .text("Calle de Javascript", 200, 65, { align: "right" })
     .text("Bootstrap, Mongo, 10025", 200, 80, { align: "right" })
     .moveDown();
@@ -81,7 +81,7 @@ function generateInvoiceTable(doc, invoice) {
     "Título",
     "Precio Unidad",
     "Cantidad",
-    "Precio Total"
+    "Total"
   );
   generateHr(doc, invoiceTableTop + 20);
   doc.font("Helvetica");
