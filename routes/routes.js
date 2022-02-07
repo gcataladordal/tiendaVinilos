@@ -31,7 +31,7 @@ router.post("/updateUser", pages.updateUser )
 
 router.post("/pasarela", pages.datosEnvio2)
 
-
+router.post("/enviarMail", pages.enviarMail)
 
 router.post("/verBusqueda", pages.verBusqueda )
 router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)

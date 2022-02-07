@@ -55,42 +55,48 @@
     </header>
 
     <main>
-        <div class="container">
-            <form action="/verBusquedaTitulo" id="formBusqueda2" method="POST" class="d-flex align-items-end">
-                <div>
-                    <div>
-                        <input class="form-control me-2" type="text" id="tituloBusqueda"
-                            placeholder="Buscar por título" aria-label="Search">
+        <br>
+        <div class="container ">
+            <div class="row">
+                <div class="d-grid gap-2 d-md-flex ">
+                    <form action="/verBusquedaTitulo" id="formBusqueda2" method="POST"
+                        class="d-flex align-items-end me-auto">
+
+
+                        <input class="form-control me-2" type="text" id="tituloBusqueda" placeholder="Buscar por título"
+                            aria-label="Search">
                         <input type="hidden" class="form-control" name="tituloIntroducido" value="" id="inputHidden2">
                         <button class="btn btn-outline-success" onclick="botonTitulo()" type="submit">Buscar</button>
-                    </div>
-                </div>
-            </form>
-            <form action="/verBusqueda" id="formBusqueda" method="POST" class="d-flex align-items-end">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Rock">
-                    <label class="form-check-label" for="inlineCheckbox1">Rock</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Jazz">
-                    <label class="form-check-label" for="inlineCheckbox2">Jazz</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Hip Hop">
-                    <label class="form-check-label" for="inlineCheckbox3">Hip Hop</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Blues">
-                    <label class="form-check-label" for="inlineCheckbox3">Blues</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Funk">
-                    <label class="form-check-label" for="inlineCheckbox3">Funk</label>
-                </div>
-                <input type="hidden" class="form-control" name="generosCheckados" value="" id="inputHidden">
-                <button class="btn btn-outline-success" onclick="botonBusqueda()" type="submit">Buscar</button>
-        </div>
-        </form>
+
+
+                    </form>
+                    <form action="/verBusqueda" id="formBusqueda" method="POST"
+                        class="d-flex align-items-center ms-auto">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Rock">
+                            <label class="form-check-label" for="inlineCheckbox1">Rock</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Jazz">
+                            <label class="form-check-label" for="inlineCheckbox2">Jazz</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Hip Hop">
+                            <label class="form-check-label" for="inlineCheckbox3">Hip Hop</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Blues">
+                            <label class="form-check-label" for="inlineCheckbox3">Blues</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Funk">
+                            <label class="form-check-label" for="inlineCheckbox3">Funk</label>
+                        </div>
+                        <input type="hidden" class="form-control" name="generosCheckados" value="" id="inputHidden">
+                        <button class="btn btn-outline-success" onclick="botonBusqueda()" type="submit">Buscar</button>
+                </form>
+                </div>  
+            </div>
         </div>
 
         <div class="container mt-5">
@@ -100,9 +106,10 @@
                         <div class="card" style="width: 18rem;">
                             <form action="/verProducto" method="POST">
 
-                                <input type="image"  class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> " alt="Submit Form">
+                                <input type="image" class="card-img-top" src=" <%= infoVinilos[i].imgUrl %> "
+                                    alt="Submit Form">
                                 <input type="hidden" name="id_vinilo" value="<%= infoVinilos[i].id_vinilo %>">
-                            
+
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoVinilos[i].titulo %>
@@ -110,10 +117,12 @@
                                     <p class="card-text">
                                         <%= infoVinilos[i].autor %>
 
-                                        <br>
-                                        <%= infoVinilos[i].precio %>,00 €
+                                            <br>
+                                            <%= infoVinilos[i].precio %>,00 €
                                     </p>
-                                    <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
+                                    <input type="button" class="btn btn-outline-secondary bg-dark"
+                                        value="Añadir al carrito"
+                                        onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
 
                                 </div>
                             </form>
@@ -126,12 +135,13 @@
             <h1>Vinilos scrapeados</h1>
             <div class="row justify-content-around">
 
-            <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
-                <% if (infoDiscosScrapeados[i] !== undefined){ %>
-                                <div class="col-lg mt-3">
-                                <div class="card" style="width: 18rem;">
+                <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
+                    <% if (infoDiscosScrapeados[i] !==undefined){ %>
+                        <div class="col-lg mt-3">
+                            <div class="card" style="width: 18rem;">
 
-                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+                                <input type="image" href="#" class="card-img-top"
+                                    src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <%= infoDiscosScrapeados[i].titulo %>
@@ -144,7 +154,8 @@
                                                 <%= infoDiscosScrapeados[i].precio %>
                                     </p>
 
-                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank” class="btn btn-outline-secondary bg-dark">Ver en la web</a>
+                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank”
+                                        class="btn btn-outline-secondary bg-dark">Ver en la web</a>
 
                                 </div>
                             </div>
@@ -157,7 +168,7 @@
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
-<script>
+    <script>
         function addProducto(id_vinilo) {
             var productos = [];
             if (localStorage.getItem("idProducto") === null) {
@@ -169,7 +180,7 @@
             }
         }
 
-   </script>
+    </script>
 </body>
 
 </html>
