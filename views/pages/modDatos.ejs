@@ -13,7 +13,7 @@
 
     <main>
         <div class="container">
-            <form action="*" method="POST" id="modUser">
+            <form action="/updateUser" method="POST" id="modUser">
                 <input type="hidden" id="modificarDatos" name="data" value="">
                 <!-- Modifica Datos -->
                 <h5 class="display-6 d-flex justify-content-center">Modifica tus datos</h5>
@@ -103,15 +103,8 @@
 
                 <div class="mb-2">
                     <button class="btn btn-outline-secondary bg-dark" type="submit" id="btRegister"
-                        onclick="modData()">Modificar</button>
-                    <script>
-                        function modData() {
-                            var modifyDatos = localStorage.getItem("user");
-                            console.log(modifyDatos);
-                            document.getElementById("modificarDatos").value = modifyDatos;
-                            // document.getElementById("btRegister").submit();
-                        }
-                    </script>
+                       onclick="modData()">Modificar</button>
+                   
                 </div>
             </form>
         </div>
@@ -123,5 +116,12 @@
     </footer>
 
 </body>
-
+<script>
+    function modData() {
+        var modifyDatos = localStorage.getItem("user");
+        console.log(modifyDatos);
+        document.getElementById("modificarDatos").value = modifyDatos;
+        document.getElementById("btRegister").submit();
+    }
+</script>
 </html>
