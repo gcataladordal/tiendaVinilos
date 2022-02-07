@@ -207,7 +207,7 @@ const pages = {
           
         createInvoice(factura, "./public/factura_vinilosFull.pdf");      
         res.render("pages/factura")
-    }
+    
 
     },
 
@@ -537,7 +537,6 @@ function insertarDisco(req) {
         console.log(`Inserción correcta del disco ${disco.titulo}`);
         // mongoose.disconnect();
     });
-    location.reload();
 }
 
 function saveSesionStart() {

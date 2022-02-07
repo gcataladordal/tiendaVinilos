@@ -63,7 +63,7 @@
                                 </td>
                                 <td class="text-center">
                                     <h4>
-                                        <%=infoCompras[j].productos[i][0].precio %>
+                                        <%=infoCompras[j].productos[i][0].precio %>,00 €
                                             <script>
 
                                                 total = total + parseInt('<%=infoCompras[j].productos[i][0].precio%>')
@@ -88,7 +88,7 @@
 
                         </tr>
                         <script>
-                            document.getElementById("total<%=j%>").innerText = total;
+                            document.getElementById("total<%=j%>").innerText = total + ",00 €";
                         </script>
                         </tr>
                     </tfoot>

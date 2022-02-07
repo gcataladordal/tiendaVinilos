@@ -6,10 +6,9 @@
         <script>
             function addProducto(id_vinilo) {
                 var productos = [];
-                if (localStorage.getItem("idProducto") == "") {
+                if (localStorage.getItem("idProducto") === null) {
                     localStorage.setItem("idProducto", id_vinilo)
                 } else {
-                    console.log(id_vinilo)
                     productos.push(localStorage.getItem("idProducto"));
                     productos.push(id_vinilo);
                     localStorage.setItem("idProducto", productos);
@@ -45,7 +44,7 @@
                                         <p class="card-text">
                                             <%= infoVinilos[i][j].autor %>
                                                 <br>
-                                                <%= infoVinilos[i][j].precio %>
+                                                <%= infoVinilos[i][j].precio %>,00 €
                                         </p>
                                         <a href="#" class="btn btn-dark"
                                             onclick="addProducto('<%= infoVinilos[i][j].id_vinilo %>')">Añadir al
