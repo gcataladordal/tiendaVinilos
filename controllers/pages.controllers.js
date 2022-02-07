@@ -54,7 +54,7 @@ const pages = {
     },
     updateUser: async (req, res) => {
         let updateUser = await modificarUsuario(req);
-        // res.render("pages/modDatos");
+        res.render("pages/modDatos");
     },
 
     modificarPerfil: async (req, res) => {
@@ -393,6 +393,7 @@ async function modificarDisco(req) {
 
 async function modificarUsuario(req) {
     //!! Recoge la info del usuario a modificar; probando con mi user
+    // req.body.data[0].email: recoge el mail del input hidden
     Usuario.find({ email: "dudeneto@hotmail.com" }, function (err, user) {
         if (err) throw err;
         console.log(user[0]);

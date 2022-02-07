@@ -13,7 +13,8 @@
 
     <main>
         <div class="container">
-            <form action="/updateUser" method="POST" id="modUser">
+            <form action="*" method="POST" id="modUser">
+                <input type="hidden" id="modificarDatos" name="data" value="">
                 <!-- Modifica Datos -->
                 <h5 class="display-6 d-flex justify-content-center">Modifica tus datos</h5>
 
@@ -68,7 +69,7 @@
 
                 <div class="input-group input-group-sm mb-2 ">
                     <label for="tlf" class="input-group-text">Teléfono</label>
-                    <input type="text" class="form-control" placeholder="Ej: 695403647" name="tlf" id="tlf"
+                    <input type="text" class="form-control" placeholder="Ej: 695403647" name="telefono" id="tlf"
                         aria-describedby="nameHelp">
                 </div>
                 <span></span>
@@ -101,7 +102,16 @@
                 <span></span>
 
                 <div class="mb-2">
-                    <button class="btn btn-outline-secondary bg-dark" type="submit" id="btRegister">Modificar</button>
+                    <button class="btn btn-outline-secondary bg-dark" type="submit" id="btRegister"
+                        onclick="modData()">Modificar</button>
+                    <script>
+                        function modData() {
+                            var modifyDatos = localStorage.getItem("user");
+                            console.log(modifyDatos);
+                            document.getElementById("modificarDatos").value = modifyDatos;
+                            // document.getElementById("btRegister").submit();
+                        }
+                    </script>
                 </div>
             </form>
         </div>
