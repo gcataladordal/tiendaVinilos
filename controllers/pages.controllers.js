@@ -4,6 +4,9 @@ const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
 const scrapping = require("../scrapper")
 const { createInvoice } = require("../pdfkit/createInvoice")
+const nodemailer = require("nodemailer");
+
+
 
 // ! REQUIRE de BCRYPT
 const bcrypt = require('bcrypt');
@@ -145,16 +148,49 @@ const pages = {
         }
 
     },
+    enviarMail: (req, res) => {
+        let email = req.body.email
+        let pass = req.body.password
+        
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            auth: {
+                user: email,
+                pass: pass
+            }
+        });
+        var mailOptions = {
+            from: "Remitente",
+            to: "hola@vinilosfull.com",
+            subject: "Factura de VinilosFull",
+            // text: "¡Hola! Gracias por comprar en VinilosFull. Aquí tienes la factura que nos has pedido de tu compra. Gracias por confiar en nosotros.",
+            html: '<h1>¡Hola!<h2><br/><h2>Gracias por comprar en VinilosFull. Aquí tienes la factura que nos has pedido de tu compra. Gracias por confiar en nosotros.</h2>',
+            attachments:[{
+                filename:"factura_vinilosFull.pdf",
+                path:"./public/factura_vinilosFull.pdf",
+                contentType: 'application/pdf'
+            }]
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email enviado.")
+            }
+        })
+    },
     submitDatosEnvio: async (req, res) => {
         
         const existeDni = await busquedaUsuarioDni(req.body.dni);
         if ((existeDni) == null) {
-            let usuario = insertarUsuarioDatosEnvio(req.body.nombre, req.body.apellidos, req.body.email, "", req.body.dni, req.body.direccion, req.body.cp, req.body.poblacion, req.body.tlf);
 
+            let usuario = insertarUsuarioDatosEnvio(req.body.nombre, req.body.apellidos, req.body.email, "", req.body.dni, req.body.direccion, req.body.cp, req.body.poblacion, req.body.tlf);
             res.render("pages/pasarela", {info : JSON.stringify(usuario)})
-            
+        
         } else {
-            console.log("existe usuario");
+
+            res.render("pages/pasarela", {info : JSON.stringify(existeDni)})
         }
     },
     datosEnvio2: async (req, res) => {
