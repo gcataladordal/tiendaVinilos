@@ -56,6 +56,36 @@ const pages = {
       res.render("pages/modDatos")
     },
 
+    //! Comprabar lo hice a ciegas !!!!!
+    historialNoLogin: async (req, res) => {
+        //Busca dni por email
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0]);
+        //SI no existe o lo puso mal
+        if (infoUser[0] === undefined){
+            console.log("Revisa tu correo, no existe ese email");
+        }else{
+            //verifica si ese email tiene ese dni el mismo introducido
+            let mismoDni = infoUser[0].dni == req.body.dni;
+            if (mismoDni){
+                //Recoge las compras por su id_usuario
+                let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario});
+                res.render("pages/historial", {infoCompras: (infoCompras)});
+            }else{
+                console.log("DNI no corresponde con el guardado");
+            }
+        }
+    },
+
+    historial:  async (req, res) => {
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0].id_usuario);
+
+        let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario});
+        console.log(infoCompras);
+        res.render("pages/historial", {infoCompras: (infoCompras)});
+    },
+
     verPerfil: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         res.render("pages/perfil", { infoVinilos: infoDiscos });
