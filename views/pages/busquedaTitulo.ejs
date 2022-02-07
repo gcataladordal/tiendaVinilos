@@ -26,26 +26,32 @@
     </header>
 
     <main>
+        <% if (infoVinilos2[0] == undefined) { %>
+            <div class="container mt-5">
+                <h2>El disco que busca no existe o no está disponible</h2>
+            </div>
+            <% } %>
+        <% if (infoVinilos2[0] != undefined) { %>
         <div class="container mt-5">
             <div class="row justify-content-around">
                 <div class="col-lg mt-3">
                     <div class="card" style="width: 18rem;">
                         <form action="/verProducto" method="POST">
-                            <input type="image" class="card-img-top" src=" <%= infoVinilos2.imgUrl %> "
+                            <input type="image" class="card-img-top" src=" <%= infoVinilos2[0].imgUrl %> "
                                 alt="Submit Form">
-                            <input type="hidden" name="id_vinilo" value="<%= infoVinilos2.id_vinilo %>">
+                            <input type="hidden" name="id_vinilo" value="<%= infoVinilos2[0].id_vinilo %>">
 
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <%= infoVinilos2.titulo %>
+                                    <%= infoVinilos2[0].titulo %>
                                 </h5>
                                 <p class="card-text">
-                                    <%= infoVinilos2.autor %>
+                                    <%= infoVinilos2[0].autor %>
                                         <br>
-                                        <%= infoVinilos2.precio %>
+                                        <%= infoVinilos2[0].precio %>
                                 </p>
                                 <a href="#" class="btn btn-dark"
-                                    onclick="addProducto('<%= infoVinilos2.id_vinilo %>')">Añadir al
+                                    onclick="addProducto('<%= infoVinilos2[0].id_vinilo %>')">Añadir al
                                     carrito</a>
                             </div>
                         </form>
@@ -56,6 +62,7 @@
 
             </div>
         </div>
+        <% } %>
     </main>
     <footer>
         <%- include('../partials/footer'); %>

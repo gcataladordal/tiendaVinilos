@@ -18,7 +18,9 @@ productoSchema.plugin(AutoIncrement, {inc_field: 'id_vinilo'});
 
 const Producto = mongoose.model("productos", productoSchema);
 
+
 // para exportar
 module.exports = Producto;
+
 
 

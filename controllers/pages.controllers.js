@@ -42,33 +42,65 @@ const pages = {
         res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
 
     },
+
     verBusqueda: async (req, res) => {
         let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
         res.render("pages/busqueda", { infoVinilos: infoDiscos })
     },
+
     verBusquedaTitulo: async (req, res) => {
-        let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
-        console.log("Pasamos busqueda")
-        console.log(req.body.titulo)
-        res.render("pages/busquedaTitulo", { infoVinilos2: infoTitulo })
+      let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
+        res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
+      },
+   modificarPerfil: (req, res) => {
+        res.render("pages/modDatos")
     },
+   
     updateUser: async (req, res) => {
         let updateUser = await modificarUsuario(req);
         res.render("pages/modDatos");
     },
 
-    modificarPerfil: async (req, res) => {
-        res.render("pages/modDatos");
+    //! Comprabar lo hice a ciegas !!!!!
+    historialNoLogin: async (req, res) => {
+        //Busca dni por email
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0]);
+        //SI no existe o lo puso mal
+        if (infoUser[0] === undefined) {
+            console.log("Revisa tu correo, no existe ese email");
+        } else {
+            //verifica si ese email tiene ese dni el mismo introducido
+            let mismoDni = infoUser[0].dni == req.body.dni;
+            if (mismoDni) {
+                //Recoge las compras por su id_usuario
+                let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario });
+                res.render("pages/historial", { infoCompras: infoCompras });
+            } else {
+                console.log("DNI no corresponde con el guardado");
+            }
+        }
     },
 
+    historial: async (req, res) => {
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0].id_usuario);
+
+        let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario });
+        console.log(infoCompras);
+
+    },
+    
+
     verPerfil: async (req, res) => {
-        let infoDiscos = await obtenerInfoVinilos();
+        let infoDiscos = await obtenerInfoVinilosRandom();
         res.render("pages/perfil", { infoVinilos: infoDiscos });
     },
 
     verProducto: async (req, res) => {
-        let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", { infoProducto: infoDisco });
+
+        let infoDisco = await obtenerInfoProducto(req.body.id_vinilo);
+        res.render("pages/producto", {infoProducto: infoDisco});
     },
 
     buscarHist: (req, res) => {
@@ -89,77 +121,96 @@ const pages = {
     volverAdmin: async (req, res) => {
         let infoUser = req.body.infoAdmin;
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos });
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping});
+    },
+    scrapAdmin: async (req, res) => {
+        let infoUser = req.body.infoAdmin;
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/scrapAdmin", { info: infoUser, infoDiscosScrapeados: infoDiscosScrapping});
     },
     carritoConfirmado: async (req, res) => {
         let userInfo = JSON.parse(req.body.userInfo);
         let idsVinilos = req.body.idsCompra;
         if (userInfo.nombre === "") {
             // Usuario NO registrado
-            res.render("pages/datosEnvio", { idsCompra: idsVinilos });
+
+            res.render("pages/datosEnvio");
+
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
-            res.render("pages/buyConfirm", { infoCompra: JSON.stringify(insertarEnCompras) });
+            
+            res.render("pages/buyConfirm");
         }
 
     },
+    submitDatosEnvio: async (req, res) => {
+        
+        const existeDni = await busquedaUsuarioDni(req.body.dni);
+        if ((existeDni) == null) {
+            let usuario = insertarUsuarioDatosEnvio(req.body.nombre, req.body.apellidos, req.body.email, "", req.body.dni, req.body.direccion, req.body.cp, req.body.poblacion, req.body.tlf);
+
+            res.render("pages/pasarela", {info : JSON.stringify(usuario)})
+            
+        } else {
+            console.log("existe usuario");
+        }
+    },
+    datosEnvio2: async (req, res) => {
+        let infoUser = JSON.parse(req.body.datos);
+        let infoProductos = req.body.productos;
+        console.log(infoProductos)
+        let returnInfoUserConId = await busquedaUsuarioDni(infoUser.dni) 
+        let insertarEnCompras = await insertarCompra(infoProductos, returnInfoUserConId);
+        res.render("pages/buyConfirmNoUser", {info : JSON.stringify(returnInfoUserConId)});
+            
+    
+    },
     viewRegister: (req, res) => {
         let estado = "inicio";
-        res.render("pages/registerLogin");
-        // res.render("pages/registerLogin", { validation: estado });
+        // res.render("pages/registerLogin");
+        res.render("pages/registerLogin", { validation: estado });
 
     },
-    verFactura: (req, res) => {
-        console.log(req.body.infoUser);
-        console.log(req.body.infoProductos);
+
+    verFactura: async (req, res) => {
+        // console.log(req.body.infoUser);
+        let infoComprador = JSON.parse(req.body.infoUser);
+        let idsProductosCompra = req.body.infoProductos;
+        let infoProductosFactura = await obtenerInfoProductosFactura(idsProductosCompra)
+
+        let productos = [];
+        for (let i = 0; i < infoProductosFactura.length - 1; i++) {
+            const prod = {
+                producto: infoProductosFactura[i][0].autor,
+                titulo: infoProductosFactura[i][0].titulo,
+                cantidad: 1,
+                precio: infoProductosFactura[i][0].precio * 100
+            }
+            productos.push(prod)
+        }
+    
+        const factura = {
+            shipping: {
+              nombre: infoComprador.nombre +" "+ infoComprador.apellidos,
+              direccion: infoComprador.direccion,
+              poblacion: infoComprador.poblacion,
+              cp: infoComprador.cp,
+              email: infoComprador.email,
+            },
+            productos: productos,
+            subtotal: infoProductosFactura[infoProductosFactura.length-1] * 100,
+            paid: 0,
+            invoice_nr: 1
+          };
+          
+        createInvoice(factura, "./public/factura_vinilosFull.pdf");      
         res.render("pages/factura")
-        // let infoComprador = JSON.parse(req.body.infoUser)
-        // let infoProductos = JSON.parse(req.body.infoProductos)
-
-
-        // const invoice = {
-        //     shipping: {
-        //       nombre: req.bod,
-        //       direccion: "Calle de la piruleta",
-        //       poblacion: "San Francisco",
-        //       cp: 94111,
-        //       email: "buenas@gmail.com",
-        //     },
-        //     productos: [
-        //       {
-        //         producto: "James Brown",
-        //         titulo: "The Best Of James Brown",
-        //         cantidad: 2,
-        //         precio: 6000
-        //       },
-        //       {
-        //         producto: "ABC",
-        //         titulo: "Jackson 5",
-        //         cantidad: 1,
-        //         precio: 2000
-        //       },
-        //       {
-        //         producto: "Doggystyle",
-        //         titulo: "Snoop Dogg",
-        //         cantidad: 2,
-        //         precio: 6000
-        //       }
-        //     ],
-        //     subtotal: 8000,
-        //     paid: 0,
-        //     invoice_nr: 1234
-        //   };
-
-        //   createInvoice(invoice, "factura_vinilosFull.pdf");
-
-
-
+    }
 
     },
-    viewRegister: (req, res) => {
-        res.render("pages/registerLogin");
-    },
+
     registro: (req, res) => {
         registrar(req, res);
     },
@@ -191,7 +242,6 @@ async function insertarCompra(idsVinilos, userInfo) {
     }
 
     let nuevaCompra = new Compra(compra)
-
     nuevaCompra.save(function (err) {
         if (err) throw err;
         console.log("Inserción correcta de la nueva compra");
@@ -204,8 +254,26 @@ async function obtenerInfoVinilos() {
     return infoVinilo;
 }
 
-async function obtenerInfoProducto(req) {
-    var infoProducto = await Producto.find({ "id_vinilo": req.body.id_vinilo })
+async function obtenerInfoVinilosRandom() {
+    var infoRVinilo = await Producto.find({})
+    var randomVinil = []
+     function getRandom() {
+            return Math.floor(Math.random() * infoRVinilo.length)
+        }
+        // checkeando por no repetidos
+        function checkNotRepeat(current, validNumbers) {
+            return validNumbers.includes(current)
+        }
+        while (randomVinil.length < 6) {
+            const randomIndex = getRandom()
+            if (!checkNotRepeat(infoRVinilo[randomIndex], randomVinil))
+                randomVinil.push(infoRVinilo[randomIndex])}
+            return randomVinil
+}
+
+async function obtenerInfoProducto(id_vinilo) {
+    var infoProducto = await Producto.find({ "id_vinilo": id_vinilo })
+
     return infoProducto;
 }
 
@@ -221,8 +289,23 @@ async function obtenerVinilosGenero(generosCheckados) {
     return aDiscos;
 }
 
+async function obtenerInfoProductosFactura(ids) {
+    let arrayIds = ids.split(",");
+    let arrayProductos = [];
+    let precioTotal = 0;
+        for (let i = 0; i < arrayIds.length; i++) {
+            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            arrayProductos.push(infoProductos);
+            precioTotal = precioTotal + infoProductos[0].precio
+    }
+    arrayProductos.push(precioTotal)
+    return arrayProductos;
+}
+
 async function obtenerViniloTitulo(titulo) {
-    const viniloTit = await Producto.find({ titulo: titulo });
+    const viniloTit = await Producto.find({ "titulo": titulo });
+    console.log("Esto es la búsqueda")
+    console.log(viniloTit)
     return viniloTit;
 }
 
@@ -293,11 +376,13 @@ async function registrar(req, res) {
             var passEnc = "";
             passEnc = await bcrypt.hash(password, saltRounds);
             console.log(passEnc);
-            insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
+            let inserta = await insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
             let estado = "correcto";
-            // res.render("pages/registerLogin", { validation: estado });
+            res.render("pages/registerLogin", { validation: estado });
         } else {
+            let estado = "existe";
             console.log("existe usuario");
+            res.render("pages/registerLogin", { validation: estado });
         }
     } else {
         if (!nombreOk) { console.log("Nombre no válido"); }
@@ -309,8 +394,8 @@ async function registrar(req, res) {
         if (!dniOk) { console.log(" dni no valido"); }
         if (!cpOk) { console.log(" cp no valido"); }
         if (!tlfOk) { console.log(" tlf no valido"); }
-        let estado = "incorrecto";
-        // res.render("pages/registerLogin", { validation: estado });
+        let estadoError = "incorrecto";
+        res.render("pages/registerLogin", { validation: estadoError });
     }
 }
 
@@ -344,7 +429,8 @@ async function loguear(req, res) {
         const existeEmail = await busquedaUsuarioEmail(email2);
 
         if ((existeEmail[0]) == undefined) {
-            console.log("Registrate");
+            let registrate = "noExiste";
+            res.render("pages/registerLogin", { validation: registrate });
         } else {
 
             var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
@@ -361,12 +447,15 @@ async function loguear(req, res) {
                     res.render("pages/home", { info: JSON.stringify(infoUser) });
                 }
             } else {
-                console.log("Olvidates tu pass???");
+                let noPass = "noPass";
+                res.render("pages/registerLogin", { validation: noPass });
             }
         }
     } else {
         if (!emailOk) { console.log("Email no válido"); }
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+        let estadoError = "incorrecto";
+        res.render("pages/registerLogin", { validation: estadoError });
     }
 }
 async function modificarDisco(req) {
@@ -496,7 +585,7 @@ async function busquedaUsuarioEmail(email) {
 
 
 
-function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
+async function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
     dni = dni.replace("-", "");
     dni = dni.toUpperCase();
     let usuario = {
@@ -520,7 +609,31 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         console.log(`Inserción correcta del Usuario ${nombre}`);
         // mongoose.disconnect();
     });
-    res.render("pages/registerLogin");
+}
+
+function insertarUsuarioDatosEnvio(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf) {
+    dni = dni.replace("-", "");
+    dni = dni.toUpperCase();
+    let usuario = {
+        nombre: nombre,
+        apellidos: apellidos,
+        email: email,
+        pass: pass, 
+        dni: dni,
+        telefono: tlf,
+        direccion: direccion,
+        cp: cp,
+        poblacion: poblacion,
+        admin: false
+    }
+
+    let nuevoUsuario = new Usuario(usuario);
+
+    nuevoUsuario.save(function (err) {
+        if (err) throw err;
+        console.log(`Inserción correcta del Usuario ${nombre}`);
+    });
+    return usuario
 }
 
 // ******** VALIDACIONES  ************
