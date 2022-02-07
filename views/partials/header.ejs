@@ -109,13 +109,15 @@
     </div>
 </div>
 <script>
+
+    // DISPLAYS
+
     let datoUser = JSON.parse(localStorage.getItem('user'));
     //No logueado -> se esconde el Logout
     if (datoUser.nombre == "") {
         document.getElementById("logout").style.display = 'none';
         document.getElementById("miPerfil").style.display = 'none';
         document.getElementById("nombreAdmin").style.display = 'none';
-
         //Se loguean -> aparece logout, nombre
 
     } else {
@@ -128,7 +130,6 @@
             document.getElementById("logout").style.display = 'block';
         } else {
             //VISION DEL NAV ADMIN
-            // document.getElementById("nombreSession").href="/admin";
             document.getElementById("registerLogin").style.display = 'none';
             document.getElementById("miHistorial").style.display = 'none';
             document.getElementById("inputCarrito").style.display = 'none';
@@ -136,9 +137,9 @@
             document.getElementById("carrito").style.display = 'none';
         }
     }
+
     function infoAdmin() {
         var infoAdmin = localStorage.getItem("user");
-        // console.log(JSON.parse(infoAdmin)); --> correcto
         document.getElementById("infoAdmin").value = infoAdmin;
         document.getElementById("formVolverAdmin").submit();
     }

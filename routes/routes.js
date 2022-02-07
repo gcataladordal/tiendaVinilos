@@ -2,65 +2,78 @@ const router = require("express").Router();
 const pages = require("../controllers/pages.controllers")
  
 
-//Rutas 
-// Botón a página de inicio
+// !INICIO
+// Ruta a página de inicio
 router.get("/",pages.home);
 router.get("/home", pages.verHome);
-// Botón a tienda
-router.get("/tienda",pages.verTienda);
-
-router.post("/historialNoLogin", pages.historialNoLogin);
-
-//  Usuario logueado que pincha en el boton (mi perfil) su historial
-router.post("/historial", pages.historial);
-
-router.get("/buscarHist",pages.buscarHist);
-// // Viene de un formulario a confirmar la compra
-
-// // Viene de un botón al carrito
-
-// // Viene de un submit de después de dar al carrito
-router.post("/submitDatosEnvio", pages.submitDatosEnvio);
-// // Viene del formulario a la factura
-
-// // Viene de Mi Perfil para modificar datos
-router.get("/modificarPerfil", pages.modificarPerfil);
-// // donde se genera el post y modifica la información en la BD
-router.post("/updateUser", pages.updateUser )
 
 
-router.post("/pasarela", pages.datosEnvio2)
-
-router.post("/enviarMail", pages.enviarMail)
-
-router.post("/verBusqueda", pages.verBusqueda )
-router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)
-router.post("/scrapAdmin", pages.scrapAdmin)
-
-
-// // Viene de un botón al register
+// !REGISTRO, LOGIN, LOGOUT
+// Ruta para ver la vista registro/login
 router.get("/registerLogin", pages.viewRegister);
-
+// Boton de enviar formulario (registro)
+router.post("/registro", pages.registro);
+// Boton de enviar formulario (login)
+router.post("/login", pages.login);
+// Botón para cerrar sesión y volver al home
 router.get("/logout", pages.logout);
 
-router.post("/verFactura", pages.verFactura)
-router.post("/carritoConfirmado", pages.carritoConfirmado)
-router.post("/verCarrito", pages.verCarrito)
 
-router.post("/registro", pages.registro);
-router.post("/login", pages.login);
-// // Viene de un botón de perfil
+// !TIENDA
+// Ruta a tienda
+router.get("/tienda",pages.verTienda);
+// Boton del buscador por generos
+router.post("/verBusqueda", pages.verBusqueda);
+// Boton del buscador por titulo
+router.post("/verBusquedaTitulo", pages.verBusquedaTitulo);
+// Boton de ver producto concreto
+router.post("/verProducto", pages.verProducto);
+
+
+// !HISTORIAL
+// Ruta a buscar Historial cuando no estas registrado
+router.get("/buscarHist",pages.buscarHist);
+// Boton al historial de un usuario no registrado
+router.post("/historialNoLogin", pages.historialNoLogin);
+//  Boton de Usuario logueado que pincha  (mi perfil -->  historial)
+router.post("/historial", pages.historial);
+
+
+// !PERFIL
+// Ruta a "Ver perfil"
 router.get("/perfil", pages.verPerfil);
+// Ruta a Mi perfil --> Modificar datos
+router.get("/modificarPerfil", pages.modificarPerfil);
+// Boton de modificar datos de usuario
+router.post("/updateUser", pages.updateUser);
 
-//Direcciona a la pg de admin
 
-//Para volver desde el nav a la vision de admin
+// !CARRITO
+// Boton de confirmar carrito
+router.post("/carritoConfirmado", pages.carritoConfirmado);
+// Boton de "Ver Carrito"
+router.post("/verCarrito", pages.verCarrito);
+
+
+// !FINALIZAR COMPRA
+// Boton de un submit de después de comprar si no estas registrado
+router.post("/submitDatosEnvio", pages.submitDatosEnvio);
+// Ruta obtención datos usuario
+router.post("/pasarela", pages.datosEnvio2);
+// Boton de enviar factura por email
+router.post("/enviarMail", pages.enviarMail);
+// Boton de Descargar factura cuando compras
+router.post("/verFactura", pages.verFactura);
+
+
+// !ADMIN:
+// Boton para volver desde el nav a la vision de admin
 router.post("/volverAdmin", pages.volverAdmin);
-//Inserta disco
+// Botones para insertar, modificar o eliminar discos
 router.post("/addDisco", pages.addDisco);
 router.post("/deleteDisco", pages.deleteDisco);
 router.post("/updateDisco", pages.updateDisco);
-// // Viene de un botón del producto y te lleva a la info de ese producto
-router.post("/verProducto", pages.verProducto);
+// Boton para añadir vinilos scrapeados a la base de datos 
+router.post("/scrapAdmin", pages.scrapAdmin);
 
 module.exports = router;
