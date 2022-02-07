@@ -8,9 +8,12 @@ router.get("/",pages.home);
 router.get("/home", pages.verHome);
 // Botón a tienda
 router.get("/tienda",pages.verTienda);
-// // Viene de un formulario a vista de admin
 
-// // Viene de un botón y va a buscar historial
+router.post("/historialNoLogin", pages.historialNoLogin);
+
+//  Usuario logueado que pincha en el boton (mi perfil) su historial
+router.post("/historial", pages.historial);
+
 router.get("/buscarHist",pages.buscarHist);
 // // Viene de un formulario a confirmar la compra
 
@@ -19,9 +22,6 @@ router.get("/buscarHist",pages.buscarHist);
 // // Viene de un submit de después de dar al carrito
 router.post("/submitDatosEnvio", pages.submitDatosEnvio);
 // // Viene del formulario a la factura
-
-// // Viene del formulario para ver el historial
-// router.post("/historial", pages.historial);
 
 // // Viene de Mi Perfil para modificar datos
 router.get("/modificarPerfil", pages.modificarPerfil);

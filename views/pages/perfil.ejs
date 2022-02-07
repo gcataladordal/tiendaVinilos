@@ -14,9 +14,14 @@
 
   <main>
     <div class="container my-5 d-flex justify-content-evenly">
-      <button type="button" class="btn btn-outline-secondary bg-dark">Historial</button>
+
+      <form action="/historial" method="POST" id="accesoHistorial">
+        <input type="hidden" name="email" id="emailUser" value="">
+        <button type="submit" class="btn btn-outline-secondary bg-dark" onclick="obtenerEmail()">Historial</button>
+      </form>
+
       <form method="GET" action="/modificarPerfil">
-      <button type="submit" class="btn btn-outline-secondary bg-dark">Modificar mis datos</button>
+        <button type="submit" class="btn btn-outline-secondary bg-dark">Modificar mis datos</button>
       </form>
     </div>
     <div class="container d-flex justify-content-center">
@@ -40,7 +45,8 @@
                       <br>
                       <%= infoVinilos[i].precio %>
                   </p>
-                  <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
+                  <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito"
+                    onclick="addProducto('<%= infoVinilos[i].id_vinilo %>')">
                 </div>
               </form>
             </div>
@@ -58,15 +64,23 @@
 
 <script>
   function addProducto(id_vinilo) {
-      var productos = [];
-      if (localStorage.getItem("idProducto") === null) {
-          localStorage.setItem("idProducto", id_vinilo)
-      } else {
-          productos.push(localStorage.getItem("idProducto"));
-          productos.push(id_vinilo);
-          localStorage.setItem("idProducto", productos);
-      }
+    var productos = [];
+    if (localStorage.getItem("idProducto") === null) {
+      localStorage.setItem("idProducto", id_vinilo)
+    } else {
+      productos.push(localStorage.getItem("idProducto"));
+      productos.push(id_vinilo);
+      localStorage.setItem("idProducto", productos);
+    }
   }
+  function obtenerEmail() {
+    let infoUser = JSON.parse(localStorage.getItem("user"));
+    console.log(infoUser.email);
 
+    document.getElementById("emailUser").value = infoUser.email;
+    document.getElementById("accesoHistorial").submit();
+
+  }
 </script>
+
 </html>

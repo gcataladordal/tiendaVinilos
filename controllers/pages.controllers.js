@@ -39,21 +39,53 @@ const pages = {
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
-        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
+        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
 
     },
+
     verBusqueda: async (req, res) => {
-    let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
-    res.render("pages/busqueda", {infoVinilos: infoDiscos} )
+        let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
+        res.render("pages/busqueda", { infoVinilos: infoDiscos })
     },
+
     verBusquedaTitulo: async (req, res) => {
         let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
         console.log("Pasamos busqueda")
         console.log(req.body.titulo)
-        res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
-      },
-      modificarPerfil: (req, res) => {
-      res.render("pages/modDatos")
+        res.render("pages/busquedaTitulo", { infoVinilos2: infoTitulo })
+    },
+    modificarPerfil: (req, res) => {
+        res.render("pages/modDatos")
+    },
+
+    //! Comprabar lo hice a ciegas !!!!!
+    historialNoLogin: async (req, res) => {
+        //Busca dni por email
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0]);
+        //SI no existe o lo puso mal
+        if (infoUser[0] === undefined) {
+            console.log("Revisa tu correo, no existe ese email");
+        } else {
+            //verifica si ese email tiene ese dni el mismo introducido
+            let mismoDni = infoUser[0].dni == req.body.dni;
+            if (mismoDni) {
+                //Recoge las compras por su id_usuario
+                let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario });
+                res.render("pages/historial", { infoCompras: infoCompras });
+            } else {
+                console.log("DNI no corresponde con el guardado");
+            }
+        }
+    },
+
+    historial: async (req, res) => {
+        let infoUser = await busquedaUsuarioEmail(req.body.email);
+        console.log(infoUser[0].id_usuario);
+
+        let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario });
+        console.log(infoCompras);
+        res.render("pages/historial", { infoCompras: infoCompras });
     },
 
     verPerfil: async (req, res) => {
@@ -72,7 +104,7 @@ const pages = {
 
     verCarrito: async (req, res) => {
         let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
-        if (typeof(arrayProductos) === "string"){
+        if (typeof (arrayProductos) === "string") {
             res.render("pages/carritoVacio");
         } else {
             res.render("pages/carrito", { infoProductos: arrayProductos });
@@ -124,8 +156,8 @@ const pages = {
     },
     viewRegister: (req, res) => {
         let estado = "inicio";
-        res.render("pages/registerLogin");
-        // res.render("pages/registerLogin", { validation: estado });
+        // res.render("pages/registerLogin");
+        res.render("pages/registerLogin", { validation: estado });
 
     },
     verFactura: async (req, res) => {
@@ -159,16 +191,11 @@ const pages = {
             invoice_nr: 1
           };
           
-        createInvoice(factura, "./public/factura_vinilosFull.pdf");
-          
-
+        createInvoice(factura, "./public/factura_vinilosFull.pdf");      
         res.render("pages/factura")
-
-
+    }
     },
-    viewRegister: (req, res) => {
-        res.render("pages/registerLogin");
-    },
+
     registro: (req, res) => {
         registrar(req, res);
     },
@@ -184,15 +211,15 @@ const pages = {
 }
 
 
-async function insertarCompra(idsVinilos, userInfo){
+async function insertarCompra(idsVinilos, userInfo) {
     var productosComprados = [];
     let arrayIds = idsVinilos.split(",");
-    
+
     for (let i = 0; i < arrayIds.length; i++) {
-        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i]})
+        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i] })
         productosComprados.push(infoVinilo);
     }
-      
+
     let compra = {
         id_usuario: userInfo.id_usuario,
         productos: productosComprados,
@@ -220,8 +247,8 @@ async function obtenerInfoProducto(id_vinilo) {
 async function obtenerVinilosGenero(generosCheckados) {
     let aGeneros = generosCheckados.split(",");
     let aDiscos = []
-    for (let i = 0; i < aGeneros.length; i++){
-        const vinilosGen = await Producto.find({ genero: aGeneros[i]});
+    for (let i = 0; i < aGeneros.length; i++) {
+        const vinilosGen = await Producto.find({ genero: aGeneros[i] });
         vinilosGen.push(aGeneros[i])
         aDiscos.push(vinilosGen)
     }
@@ -254,7 +281,7 @@ async function obtenerProductosCarrito(ids) {
         let arrayProductos = [];
         let precioTotal = 0;
         for (let i = 0; i < arrayIds.length; i++) {
-            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            let infoProductos = await Producto.find({ "id_vinilo": arrayIds[i] });
             arrayProductos.push(infoProductos);
             precioTotal = precioTotal + infoProductos[0].precio
         }
@@ -272,7 +299,7 @@ async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
     const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
-    
+
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!
@@ -314,11 +341,13 @@ async function registrar(req, res) {
             var passEnc = "";
             passEnc = await bcrypt.hash(password, saltRounds);
             console.log(passEnc);
-            insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
+            let inserta = await insertarUsuario(nombre, apellidos, email, passEnc, dni, direccion, cp, poblacion, tlf, res);
             let estado = "correcto";
-            // res.render("pages/registerLogin", { validation: estado });
+            res.render("pages/registerLogin", { validation: estado });
         } else {
+            let estado = "existe";
             console.log("existe usuario");
+            res.render("pages/registerLogin", { validation: estado });
         }
     } else {
         if (!nombreOk) { console.log("Nombre no válido"); }
@@ -330,8 +359,8 @@ async function registrar(req, res) {
         if (!dniOk) { console.log(" dni no valido"); }
         if (!cpOk) { console.log(" cp no valido"); }
         if (!tlfOk) { console.log(" tlf no valido"); }
-        let estado = "incorrecto";
-        // res.render("pages/registerLogin", { validation: estado });
+        let estadoError = "incorrecto";
+        res.render("pages/registerLogin", { validation: estadoError });
     }
 }
 
@@ -365,7 +394,8 @@ async function loguear(req, res) {
         const existeEmail = await busquedaUsuarioEmail(email2);
 
         if ((existeEmail[0]) == undefined) {
-            console.log("Registrate");
+            let registrate = "noExiste";
+            res.render("pages/registerLogin", { validation: registrate });
         } else {
 
             var mismoPass = await bcrypt.compare(password3, existeEmail[0].pass)     // <-- COMPARA LAS 2 PASSWORDS
@@ -382,12 +412,15 @@ async function loguear(req, res) {
                     res.render("pages/home", { info: JSON.stringify(infoUser) });
                 }
             } else {
-                console.log("Olvidates tu pass???");
+                let noPass = "noPass";
+                res.render("pages/registerLogin", { validation: noPass });
             }
         }
     } else {
         if (!emailOk) { console.log("Email no válido"); }
         if (!passOk) { console.log("Min 1 número y 1 caracter especial"); }
+        let estadoError = "incorrecto";
+        res.render("pages/registerLogin", { validation: estadoError });
     }
 }
 async function modificarDisco(req) {
@@ -490,7 +523,7 @@ async function busquedaUsuarioEmail(email) {
 
 
 
-function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
+async function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf, res) {
     dni = dni.replace("-", "");
     dni = dni.toUpperCase();
     let usuario = {
@@ -514,7 +547,6 @@ function insertarUsuario(nombre, apellidos, email, pass, dni, direccion, cp, pob
         console.log(`Inserción correcta del Usuario ${nombre}`);
         // mongoose.disconnect();
     });
-    res.render("pages/registerLogin");
 }
 
 function insertarUsuarioDatosEnvio(nombre, apellidos, email, pass, dni, direccion, cp, poblacion, tlf) {
