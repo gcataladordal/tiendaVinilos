@@ -123,28 +123,58 @@
             </div>
         </div>
         <div class="container mt-5">
-            <h1>Vinilos scrapeados</h1>
+            <h1>Nuestras últimas incorporaciones</h1>
+            <div class="row justify-content-around">
+                <% for(let j=0 ; j < infoVinilos3.length ; j++) { %>
+                    <div class="col-lg mt-3">
+                        <div class="card" style="width: 18rem;">
+                            <form action="/verProducto" method="POST">
+
+                                <input type="image"  class="card-img-top" src=" <%= infoVinilos3[j].imgUrl %> " alt="Submit Form">
+                                <input type="hidden" name="id_viniloScrap" value="<%= infoVinilos3[j].id_viniloScrap %>">
+                            
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= infoVinilos3[j].titulo %>
+                                    </h5>
+                                    <p class="card-text">
+                                        <%= infoVinilos3[j].autor %>
+
+                                        <br>
+                                        <%= infoVinilos3[j].precio %> 
+                                    </p>
+                                    <input type="button" class="btn btn-outline-secondary bg-dark" value="Añadir al carrito" onclick="addProducto('<%= infoVinilos3[j].id_viniloScrap %>')">
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <h1>Vinilos de nuestras tiendas amigas</h1>
             <div class="row justify-content-around">
 
-            <% for(let i=0 ; i < infoDiscosScrapeados.length ; i++) { %>
-                <% if (infoDiscosScrapeados[i] !== undefined){ %>
+            <% for(let k=0 ; k < infoDiscosScrapeados.length ; k++) { %>
+                <% if (infoDiscosScrapeados[k] !== undefined){ %>
                                 <div class="col-lg mt-3">
                                 <div class="card" style="width: 18rem;">
 
-                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[i].imgUrl %> " alt="Submit Form">
+                                <input type="image" href="#" class="card-img-top" src=" <%= infoDiscosScrapeados[k].imgUrl %> " alt="Submit Form">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <%= infoDiscosScrapeados[i].titulo %>
+                                        <%= infoDiscosScrapeados[k].titulo %>
                                     </h5>
                                     <p class="card-text">
-                                        <%= infoDiscosScrapeados[i].autor %>
+                                        <%= infoDiscosScrapeados[k].autor %>
                                             <br>
-                                            <%= infoDiscosScrapeados[i].ano %>
+                                            <%= infoDiscosScrapeados[k].ano %>
                                                 <br>
-                                                <%= infoDiscosScrapeados[i].precio %>
+                                                <%= infoDiscosScrapeados[k].precio %>
                                     </p>
 
-                                    <a href=" <%= infoDiscosScrapeados[i].url %> " target=”_blank” class="btn btn-outline-secondary bg-dark">Ver en la web</a>
+                                    <a href=" <%= infoDiscosScrapeados[k].url %> " target=”_blank” class="btn btn-outline-secondary bg-dark">Ver en la web</a>
 
                                 </div>
                             </div>

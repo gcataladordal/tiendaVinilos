@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Producto = require("../models/productoModel");
+const ProductoScrap = require("../models/productoScrapModel");
 const Usuario = require("../models/usuarioModel");
 const Compra = require("../models/compraModel");
 const scrapping = require("../scrapper")
@@ -39,7 +40,8 @@ const pages = {
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
-        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
+        let infoBDScrapping = await obtenerInfoVinilosScrapeadosAll();
+        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping, infoVinilos3: infoBDScrapping })
 
     },
 
@@ -100,7 +102,8 @@ const pages = {
     verProducto: async (req, res) => {
 
         let infoDisco = await obtenerInfoProducto(req.body.id_vinilo);
-        res.render("pages/producto", {infoProducto: infoDisco});
+        let infoBDScrapping = await obtenerInfoVinilosScrapeados(req.body.id_viniloScrap);
+        res.render("pages/producto", {infoProducto: infoDisco, infoProducto2: infoBDScrapping});
     },
 
     buscarHist: (req, res) => {
@@ -252,6 +255,15 @@ async function insertarCompra(idsVinilos, userInfo) {
 async function obtenerInfoVinilos() {
     var infoVinilo = await Producto.find({});
     return infoVinilo;
+}
+async function obtenerInfoVinilosScrapeadosAll() {
+    var infoVinilo2 = await ProductoScrap.find({});
+    return infoVinilo2;
+}
+
+async function obtenerInfoVinilosScrapeados(id_viniloScrap) {
+    var infoViniloScrap = await ProductoScrap.find({"id_viniloScrap": id_viniloScrap});
+    return infoViniloScrap;
 }
 
 async function obtenerInfoVinilosRandom() {
