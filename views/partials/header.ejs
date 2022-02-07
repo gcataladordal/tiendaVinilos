@@ -141,7 +141,6 @@
         // console.log(JSON.parse(infoAdmin)); --> correcto
         document.getElementById("infoAdmin").value = infoAdmin;
         document.getElementById("formVolverAdmin").submit();
-
     }
 
     function recuperarCarrito() {
@@ -149,9 +148,13 @@
         document.getElementById("inputCarrito").value = carritoRecuperado;
         document.getElementById("formCarrito").submit();
     }
-    
+
     // Quita el carrito para los logueados
     function quitarCarro() {
-        localStorage.removeItem('idProducto');
+        let infoUser = localStorage.getItem('user');
+        if (infoUser != undefined){
+            localStorage.removeItem('idProducto');
+        }
     }
+
 </script>

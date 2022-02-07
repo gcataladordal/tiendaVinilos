@@ -3,10 +3,10 @@
 
 <head>
     <%- include('../partials/head'); %>
-        <!-- <script>
-            let validacion = '<%%=validation%%>'
+        <script>
+            let validacion = '<%=validation%>'
             console.log(validacion);
-        </script> -->
+        </script>
 
 </head>
 
@@ -14,21 +14,54 @@
     <header>
         <%- include('../partials/header'); %>
     </header>
-    <!-- <div class="alert alert-success" role="alert">Registro correcto</div>
-    <div class="alert alert-danger" role="alert"> Hay algun error en algun campo </div> -->
-    <!-- <script>
-        if (validacion === "inicio") {
+    <div class="alert alert-success" role="alert">Registro correcto</div>
+    <div class="alert alert-danger" role="alert"> Hay algun error en algun campo </div>
+    <div class="alert alert-danger" id="existe" role="alert"> Existe Usuario</div>
+    <div class="alert alert-danger" id="noExiste" role="alert"> No está registrado ese correo, por favor registrase</div>
+    <div class="alert alert-danger" id="noPass" role="alert"> Password Incorrecta</div>
+    
+    <script>
+        console.log(validacion);
+        if (validacion == "inicio") {
             document.getElementsByClassName("alert-success")[0].style.display = "none";
             document.getElementsByClassName("alert-danger")[0].style.display = "none";
+            document.getElementById("existe").style.display = "none";
+            document.getElementById("noExiste").style.display = "none";
+            document.getElementById("noPass").style.display = "none";
         }
-        if (validacion === "correcto") {
+        if (validacion == "correcto") {
             document.getElementsByClassName("alert-danger")[0].style.display = "none";
+            document.getElementById("existe").style.display = "none";
+            document.getElementById("noExiste").style.display = "none";
+            document.getElementById("noPass").style.display = "none";
         }
-        if (validacion === "incorrecto") {
+        if (validacion == "incorrecto") {
             document.getElementsByClassName("alert-success")[0].style.display = "none";
+            document.getElementById("existe").style.display = "none";
+            document.getElementById("noExiste").style.display = "none";
+            document.getElementById("noPass").style.display = "none";
+        }
+        if (validacion == "existe") {
+            document.getElementsByClassName("alert-success")[0].style.display = "none";
+            document.getElementsByClassName("alert-danger")[0].style.display = "none";
+            document.getElementById("noExiste").style.display = "none";
+            document.getElementById("noPass").style.display = "none";
+        }
+        if (validacion == "noExiste") {
+            document.getElementsByClassName("alert-success")[0].style.display = "none";
+            document.getElementsByClassName("alert-danger")[0].style.display = "none";
+            document.getElementById("existe").style.display = "none";
+            document.getElementById("noPass").style.display = "none";
+        }
+        if (validacion == "noPass") {
+            document.getElementsByClassName("alert-success")[0].style.display = "none";
+            document.getElementsByClassName("alert-danger")[0].style.display = "none";
+            document.getElementById("existe").style.display = "none";
+            document.getElementById("noExiste").style.display = "none";
+            
         }
 
-    </script> -->
+    </script> 
 
     <main>
         <!-- ! FORMULARIOS DE LOGIN Y REGISTER -->
