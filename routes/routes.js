@@ -32,6 +32,7 @@ router.post("/pasarela", pages.datosEnvio2)
 
 router.post("/verBusqueda", pages.verBusqueda )
 router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)
+router.post("/scrapAdmin", pages.scrapAdmin)
 
 
 // // Viene de un botón al register

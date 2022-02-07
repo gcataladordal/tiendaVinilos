@@ -49,11 +49,10 @@ const pages = {
     },
 
     verBusquedaTitulo: async (req, res) => {
-        let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
-        console.log("Pasamos busqueda")
-        console.log(req.body.titulo)
-        res.render("pages/busquedaTitulo", { infoVinilos2: infoTitulo })
-    },
+
+        let infoTitulo = await obtenerViniloTitulo(req.body.tituloIntroducido)
+        res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
+      },
     modificarPerfil: (req, res) => {
         res.render("pages/modDatos")
     },
@@ -85,11 +84,11 @@ const pages = {
 
         let infoCompras = await Compra.find({ id_usuario: infoUser[0].id_usuario });
         console.log(infoCompras);
-        res.render("pages/historial", { infoCompras: infoCompras });
+
     },
 
     verPerfil: async (req, res) => {
-        let infoDiscos = await obtenerInfoVinilos();
+        let infoDiscos = await obtenerInfoVinilosRandom();
         res.render("pages/perfil", { infoVinilos: infoDiscos });
     },
 
@@ -116,7 +115,13 @@ const pages = {
     volverAdmin: async (req, res) => {
         let infoUser = req.body.infoAdmin;
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos });
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping});
+    },
+    scrapAdmin: async (req, res) => {
+        let infoUser = req.body.infoAdmin;
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/scrapAdmin", { info: infoUser, infoDiscosScrapeados: infoDiscosScrapping});
     },
     carritoConfirmado: async (req, res) => {
         let userInfo = JSON.parse(req.body.userInfo);
@@ -239,8 +244,26 @@ async function obtenerInfoVinilos() {
     return infoVinilo;
 }
 
+async function obtenerInfoVinilosRandom() {
+    var infoRVinilo = await Producto.find({})
+    var randomVinil = []
+     function getRandom() {
+            return Math.floor(Math.random() * infoRVinilo.length)
+        }
+        // checkeando por no repetidos
+        function checkNotRepeat(current, validNumbers) {
+            return validNumbers.includes(current)
+        }
+        while (randomVinil.length < 6) {
+            const randomIndex = getRandom()
+            if (!checkNotRepeat(infoRVinilo[randomIndex], randomVinil))
+                randomVinil.push(infoRVinilo[randomIndex])}
+            return randomVinil
+}
+
 async function obtenerInfoProducto(id_vinilo) {
     var infoProducto = await Producto.find({ "id_vinilo": id_vinilo })
+
     return infoProducto;
 }
 
@@ -270,7 +293,9 @@ async function obtenerInfoProductosFactura(ids) {
 }
 
 async function obtenerViniloTitulo(titulo) {
-    const viniloTit = await Producto.find({ titulo: titulo });
+    const viniloTit = await Producto.find({ "titulo": titulo });
+    console.log("Esto es la búsqueda")
+    console.log(viniloTit)
     return viniloTit;
 }
 
