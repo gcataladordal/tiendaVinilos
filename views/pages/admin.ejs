@@ -7,6 +7,8 @@
             let name = ('<%-info%>');
             // console.log(name);
             localStorage.setItem("user", name);
+            let admin = '<%-inicio%>'
+            // console.log(admin);
         </script>
 </head>
 
@@ -16,7 +18,17 @@
         <%- include('../partials/header'); %>
     </header>
 
-
+    <div class="alert alert-success" role="alert" id="inserccionDisco">Insercción correcta</div>
+    <script>
+      if (admin == "inicio") {
+            document.getElementById("inserccionDisco").style.display = "none";
+        // document.getElementsByClassName("alert-danger")[0].style.display = "none";
+      }
+    //   if (admin == "inicio") {
+    //         document.getElementById("inserccionDisco").style.display = "none";
+    //     // document.getElementsByClassName("alert-danger")[0].style.display = "none";
+    //   }
+    </script>
     <main>
         <!-- ! FORMULARIO PARA AÑADIR, BORRAR E INSERTAR SCRAPPEO DEL ADMIN -->
 
@@ -33,6 +45,7 @@
                 <!--! ***INSERTAR VINILOS ****-->
                 <div class="col-4 ">
                     <form action="/addDisco" method="POST" id="fmAdminInsert">
+                        <input type="hidden" id="insertarInfo"value="" name="infoUser">
                         <h5>Insertar vinilo</h5>
 
                         <!-- ! *** TÍTULO ***-->
@@ -43,6 +56,7 @@
                                 required><br>
                         </div>
                         <span></span>
+
                         <!--! *** AUTOR ***-->
 
                         <div class="input-group input-group-sm mb-2">
@@ -100,7 +114,15 @@
                         </div>
                     </form>
                 </div>
+<!-- <script>
+     function infoUser() {
+        var infoAdmin = localStorage.getItem("user");
+        console.log(JSON.parse(infoAdmin)); 
+        document.getElementById("insertarInfo").value = infoAdmin;
+        document.getElementById("fmAdminInsert").submit();
+    }
 
+</script> -->
 
                 <!--! ***MODIFICAR VINILOS ****-->
 
@@ -250,7 +272,7 @@
 
                         <h5>Insertar vinilos auto</h5>
                         <h7>¿Cuántos quieres insertar?</h7>
-                        <!--! *** ISBN BORRAR ***-->
+                        <!--! *** DISCO BORRAR ***-->
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                                 value="option1">
