@@ -31,6 +31,7 @@ router.get("/modificarPerfil", pages.modificarPerfil);
 
 router.post("/verBusqueda", pages.verBusqueda )
 router.post("/verBusquedaTitulo", pages.verBusquedaTitulo)
+router.post("/scrapAdmin", pages.scrapAdmin)
 
 
 // // Viene de un botón al register

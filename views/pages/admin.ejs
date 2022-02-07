@@ -194,7 +194,8 @@
 
                         <!--! BOTÓN MODIFICAR -->
                         <div class="mb-2">
-                            <button class="btn btn-outline-secondary bg-dark" type="submit" id="btInsertarVinilo">Modificar un vinilo</button>
+                            <button class="btn btn-outline-secondary bg-dark" type="submit"
+                                id="btInsertarVinilo">Modificar un vinilo</button>
                         </div>
                     </form>
                 </div>
@@ -209,7 +210,7 @@
                         <div class="input-group input-group-sm mb-2">
                             <input type="hidden" class="form-control" placeholder="" name="nombreSelect" value=""
                                 id="deteleSelect"><br>
-                           
+
                             <select class="form-control" id="selection2">
 
                                 <% for(let i=0 ; i < infoDisco.length ; i++) { %>
@@ -245,7 +246,7 @@
                 <!-- INSERTAR EL SCRAPPEO POR NÚMERO -->
 
                 <div class="col-15">
-                    <form action="/admin" method="POST" id="fmAdminScrappeo">
+                    <form action="/scrapAdmin" method="POST" id="fmAdminScrappeo">
 
                         <h5>Insertar vinilos auto</h5>
                         <h7>¿Cuántos quieres insertar?</h7>
@@ -286,9 +287,28 @@
                             <label class="form-check-label" for="inlineRadio2">15</label>
                         </div>
                         <!-- botón insertar scrappeo -->
+                        <input type="hidden" class="form-control" placeholder="" name="insertScrap" value=""
+                            id="hiddenScrap"><br>
                         <div class="mb-2">
-                            <input class="btn btn-outline-secondary bg-dark" type="submit" id="btScrappeoVinilo"
+                            <input class="btn btn-outline-secondary bg-dark" onclick="botonScrap()" type="submit" id="btScrappeoVinilo"
                                 value="Insertar vinilo Auto">
+                            <script>
+                                async function botonScrap() {
+                                    let numeroCheckado = await comprobarCheck();
+                                    document.getElementById("hiddenScrap").value = numeroCheckado;
+                                    document.getElementById("fmAdminScrappeo").submit()
+                                }
+
+                                function comprobarCheck() {
+                                    var todosCheck = document.getElementsByClassName("form-check-input")
+                                    var numeroCheckado;
+                                    for (let i = 0; i < todosCheck.length; i++) {
+                                        if (todosCheck[i].checked) { numeroCheckado = todosCheck[i].value }
+                                    }
+                                    console.log(numeroCheckado)
+                                    return numeroCheckado
+                                }
+                            </script>
                         </div>
                     </form>
                 </div>

@@ -1,22 +1,8 @@
 const { url } = require('inspector');
 const puppeteer = require('puppeteer')
 const mongoose = require("mongoose");
-const urlBD = "mongodb://localhost:27017/vinilosFull";
-//const Producto = require("./models/productoModel");
-// const objetoProductoSchema = {
-//     titulo: String,
-//     autor: String,
-//     genero: String,
-//     ano: String,
-//     numDisco: String,
-//     precio: String,
-//     imgUrl: String,
-// };
-// const AutoIncrement = require('mongoose-sequence')(mongoose);
-//const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
-// productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
-// const Producto = mongoose.model("productos", productoSchema);
-
+const Producto = require("./models/productoModel");
+const ProductoScrap = require("./models/productoScrapModel");
 
 const extractData = async (url, browser) => {
     try {
@@ -47,14 +33,13 @@ const addRecordsWeb = async (num) => {
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         await page.goto(url);
-        const productUrls = await // Evalúa la página cargada, crea un array con TODOS los selectores (Funciona como un querySelectorAll) 
+        const productUrls = await 
             page.$$eval('.release-content > a ', (etiquetaEnlace) => etiquetaEnlace.map(a => a.href));
         const randomLinks = []
-        // obteniendo aleatorios en rango
+        // Funcion para aleatorizar los links que recogemos
         function getRandom() {
             return Math.floor(Math.random() * productUrls.length)
         }
-        // checkeando por no repetidos
         function checkNotRepeat(current, validNumbers) {
             return validNumbers.includes(current)
         }
@@ -64,13 +49,10 @@ const addRecordsWeb = async (num) => {
                 randomLinks.push(productUrls[randomIndex])
         }
         console.log("Links aleatorios")
-        //console.log(randomLinks)
         for (productLink in randomLinks) {
             const productsInfo = await extractData(randomLinks[productLink], browser)
             scrapedData.push(productsInfo);
         }
-       // console.log("Data scrapeada");
-        // console.log(scrapedData);
         return scrapedData
     }
     catch (error) {
@@ -79,29 +61,9 @@ const addRecordsWeb = async (num) => {
 }
 
 async function addRecordsDB(num) {
-    const objetoProductoSchema = {
-        titulo: String,
-        autor: String,
-        genero: String,
-        ano: String,
-        numDisco: String,
-        precio: String,
-        imgUrl: String,
-    };
-    const AutoIncrement = require('mongoose-sequence')(mongoose);
-    const productoSchema = mongoose.Schema(objetoProductoSchema, { versionKey: false })
-    productoSchema.plugin(AutoIncrement, { inc_field: 'id_vinilo' });
-    const Producto = mongoose.model("productos", productoSchema);
-    let scrapedData = await addRecordsWeb(num)
-    mongoose.connect(urlBD, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-        .then(() => {
-            console.log("Base de datos de Mongo conectada");
-        });
+     let scrapedData = await addRecordsWeb(num)
     for (let i = 0; i < scrapedData.length; i++) {
-        let productoScraped = new Producto(scrapedData[i]);
+        let productoScraped = new ProductoScrap(scrapedData[i]);
         productoScraped.save(function (err) {
             if (err) throw err;
             console.log("Inserción correcta");

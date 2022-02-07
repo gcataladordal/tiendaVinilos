@@ -82,7 +82,13 @@ const pages = {
     volverAdmin: async (req, res) => {
         let infoUser = req.body.infoAdmin;
         let infoDiscos = await obtenerInfoVinilos();
-        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos });
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/admin", { info: infoUser, infoDisco: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping});
+    },
+    scrapAdmin: async (req, res) => {
+        let infoUser = req.body.infoAdmin;
+        let infoDiscosScrapping = await scrapping.addRecordsDB(req.body.insertScrap)
+        res.render("pages/scrapAdmin", { info: infoUser, infoDiscosScrapeados: infoDiscosScrapping});
     },
     carritoConfirmado: async (req, res) => {
         let userInfo = JSON.parse(req.body.userInfo);
