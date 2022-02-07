@@ -39,21 +39,26 @@ const pages = {
     verTienda: async (req, res) => {
         let infoDiscos = await obtenerInfoVinilos();
         let infoDiscosScrapping = await scrapping.addRecordsWeb(7);
-        res.render("pages/tienda", {infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping})
+        res.render("pages/tienda", { infoVinilos: infoDiscos, infoDiscosScrapeados: infoDiscosScrapping })
 
     },
     verBusqueda: async (req, res) => {
-    let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
-    res.render("pages/busqueda", {infoVinilos: infoDiscos} )
+        let infoDiscos = await obtenerVinilosGenero(req.body.generosCheckados);
+        res.render("pages/busqueda", { infoVinilos: infoDiscos })
     },
     verBusquedaTitulo: async (req, res) => {
         let infoTitulo = await obtenerViniloTitulo(req.body.titulo)
         console.log("Pasamos busqueda")
         console.log(req.body.titulo)
-        res.render("pages/busquedaTitulo", {infoVinilos2 : infoTitulo} )
-      },
-      modificarPerfil: (req, res) => {
-      res.render("pages/modDatos")
+        res.render("pages/busquedaTitulo", { infoVinilos2: infoTitulo })
+    },
+    updateUser: async (req, res) => {
+        let updateUser = await modificarUsuario(req);
+        // res.render("pages/modDatos");
+    },
+
+    modificarPerfil: async (req, res) => {
+        res.render("pages/modDatos");
     },
 
     verPerfil: async (req, res) => {
@@ -63,7 +68,7 @@ const pages = {
 
     verProducto: async (req, res) => {
         let infoDisco = await obtenerInfoProducto(req);
-        res.render("pages/producto", {infoProducto: infoDisco});
+        res.render("pages/producto", { infoProducto: infoDisco });
     },
 
     buscarHist: (req, res) => {
@@ -72,7 +77,7 @@ const pages = {
 
     verCarrito: async (req, res) => {
         let arrayProductos = await obtenerProductosCarrito(req.body.carritoData);
-        if (typeof(arrayProductos) === "string"){
+        if (typeof (arrayProductos) === "string") {
             res.render("pages/carritoVacio");
         } else {
             res.render("pages/carrito", { infoProductos: arrayProductos });
@@ -91,7 +96,7 @@ const pages = {
         let idsVinilos = req.body.idsCompra;
         if (userInfo.nombre === "") {
             // Usuario NO registrado
-            res.render("pages/datosEnvio", {idsCompra : idsVinilos});
+            res.render("pages/datosEnvio", { idsCompra: idsVinilos });
         } else {
             // Usuario registrado
             let insertarEnCompras = await insertarCompra(idsVinilos, userInfo);
@@ -111,7 +116,7 @@ const pages = {
         res.render("pages/factura")
         // let infoComprador = JSON.parse(req.body.infoUser)
         // let infoProductos = JSON.parse(req.body.infoProductos)
-        
+
 
         // const invoice = {
         //     shipping: {
@@ -145,9 +150,9 @@ const pages = {
         //     paid: 0,
         //     invoice_nr: 1234
         //   };
-          
+
         //   createInvoice(invoice, "factura_vinilosFull.pdf");
-          
+
 
 
 
@@ -170,15 +175,15 @@ const pages = {
 }
 
 
-async function insertarCompra(idsVinilos, userInfo){
+async function insertarCompra(idsVinilos, userInfo) {
     var productosComprados = [];
     let arrayIds = idsVinilos.split(",");
-    
+
     for (let i = 0; i < arrayIds.length; i++) {
-        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i]})
+        let infoVinilo = await Producto.find({ "id_vinilo": arrayIds[i] })
         productosComprados.push(infoVinilo);
     }
-      
+
     let compra = {
         id_usuario: userInfo.id_usuario,
         productos: productosComprados,
@@ -207,8 +212,8 @@ async function obtenerInfoProducto(req) {
 async function obtenerVinilosGenero(generosCheckados) {
     let aGeneros = generosCheckados.split(",");
     let aDiscos = []
-    for (let i = 0; i < aGeneros.length; i++){
-        const vinilosGen = await Producto.find({ genero: aGeneros[i]});
+    for (let i = 0; i < aGeneros.length; i++) {
+        const vinilosGen = await Producto.find({ genero: aGeneros[i] });
         vinilosGen.push(aGeneros[i])
         aDiscos.push(vinilosGen)
     }
@@ -228,7 +233,7 @@ async function obtenerProductosCarrito(ids) {
         let arrayProductos = [];
         let precioTotal = 0;
         for (let i = 0; i < arrayIds.length; i++) {
-            let infoProductos = await Producto.find({"id_vinilo": arrayIds[i] });
+            let infoProductos = await Producto.find({ "id_vinilo": arrayIds[i] });
             arrayProductos.push(infoProductos);
             precioTotal = precioTotal + infoProductos[0].precio
         }
@@ -246,7 +251,7 @@ async function registrar(req, res) {
     //! ---- Variables de la información del registro -----
 
     const { nombre, apellidos, email, password, password2, dni, direccion, cp, poblacion, tlf } = req.body;
-    
+
     //! Expresiones Regulares validaciones:
     var regExpDni = new RegExp(/^[0-9]{8}\-?[a-zA-Z]{1}/);
     var regExpName = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ]+$/u); // Otro para apellidos por el espacio!!
@@ -385,6 +390,32 @@ async function modificarDisco(req) {
     });
 
 }
+
+async function modificarUsuario(req) {
+    //!! Recoge la info del usuario a modificar; probando con mi user
+    Usuario.find({ email: "dudeneto@hotmail.com" }, function (err, user) {
+        if (err) throw err;
+        console.log(user[0]);
+        if (req.body.nombre != "") { user[0].nombre = req.body.nombre; }
+        if (req.body.apellidos != "") { user[0].apellidos = req.body.apellidos; }
+        if (req.body.email != "") { user[0].email = req.body.email; }
+        // ?? Password no va encriptado, OJO!
+        if (req.body.password != "") { user[0].password = req.body.password; }
+        if (req.body.dni != "") { user[0].dni = req.body.dni; }
+        if (req.body.telefono != "") { user[0].telefono = req.body.telefono; }
+        if (req.body.direccion != "") { user[0].direccion = req.body.direccion; }
+        if (req.body.cp != "") { user[0].cp = req.body.cp; }
+        if (req.body.poblacion != "") { user[0].poblacion = req.body.poblacion; }
+        user[0].save(function (err) {
+            if (err) throw err;
+            console.log("Modificación correcta");
+            // mongoose.disconnect();
+        });
+
+    });
+
+}
+
 async function borrarDisco(req) {
     const info_vinilo = await Producto.find({ titulo: req.body.nombreSelect });
     if (info_vinilo[0] === undefined) {

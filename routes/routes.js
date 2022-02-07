@@ -26,6 +26,9 @@ router.get("/buscarHist",pages.buscarHist);
 // // Viene de Mi Perfil para modificar datos
 router.get("/modificarPerfil", pages.modificarPerfil);
 
+router.post("/updateUser", pages.updateUser )
+
+
 // router.get("/insertarProducto", pages.insertarProducto)
 
 
