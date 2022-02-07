@@ -22,7 +22,7 @@
                         <form method="POST" action="/verFactura" id="formFactura">
                             <input type="hidden" id="inputUserHiddenFactura" name="infoUser" value="">
                             <input type="hidden" id="inputProductosHiddenFactura" name="infoProductos" value="">
-                            <button onclick="irFacturaNoRegistrado()" class="btn btn-outline-secondary bg-dark" type="submit">Descargar factura</button>
+                            <button onclick="irFactura()" class="btn btn-outline-secondary bg-dark" type="submit">Descargar factura</button>
                         </form> 
                     </div>
                 </div>
@@ -34,14 +34,15 @@
     <%- include('../partials/footer'); %>
 </footer>
 <script>
-    function irFacturaNoRegistrado() {
-        var infoUser = localStorage.getItem("user")
+    infoEnviar = '<%-info%>'
+    function irFactura() {
         var idProductos = localStorage.getItem("idProducto")
         
-        document.getElementById("inputUserHiddenFactura").value = infoUser;
+        document.getElementById("inputUserHiddenFactura").value = infoEnviar;
         document.getElementById("inputProductosHiddenFactura").value = idProductos;
         document.getElementById("formFactura").submit();
         localStorage.removeItem("idProducto")
+
     }
 </script>
 </body>
